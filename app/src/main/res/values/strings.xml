@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Niche App Utils</string>
+    <string name="floating_title">Title</string>
+    <string name="floating_description">Description</string>
+    <string name="restartPhrase">restartPhrase</string>
+</resources>

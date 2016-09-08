@@ -1,0 +1,54 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'niche-app-utils'
+
+    publishedGroupId = 'eu.valics'
+    libraryName = 'Niche App Utils'
+    artifact = 'niche-app-utils'
+
+    libraryDescription = 'Set of commonly used things in my projects'
+
+    siteUrl = 'https://github.com/lukasvalik/NicheAppUtils'
+    gitUrl = 'https://github.com/lukasvalik/NicheAppUtils.git'
+
+    libraryVersion = '0.1.0'
+
+    developerId = 'nuuneoi'
+    developerName = 'Lukas Valik'
+    developerEmail = 'lukassvalik@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "0.1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    //progress bar
+    compile 'com.pnikosis:materialish-progress:1.7'
+    //Ads
+    compile 'com.google.android.gms:play-services-ads:9.4.0'
+}
+
