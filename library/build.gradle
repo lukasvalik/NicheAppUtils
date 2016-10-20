@@ -1,29 +1,7 @@
 apply plugin: 'com.android.library'
-
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'niche-app-utils'
-
-    publishedGroupId = 'eu.valics'
-    libraryName = 'Niche App Utils'
-    artifact = 'niche-app-utils'
-
-    libraryDescription = 'Set of commonly used things in my projects'
-
-    siteUrl = 'https://github.com/lukasvalik/NicheAppUtils'
-    gitUrl = 'https://github.com/lukasvalik/NicheAppUtils.git'
-
-    libraryVersion = '0.1.0'
-
-    developerId = 'nuuneoi'
-    developerName = 'Lukas Valik'
-    developerEmail = 'lukassvalik@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.bintray"
+version = "0.1.0"
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
@@ -45,10 +23,105 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'org.jsoup:jsoup:1.8.1'
+
+    compile 'com.android.support:appcompat-v7:24.2.1'
     //progress bar
     compile 'com.pnikosis:materialish-progress:1.7'
     //Ads
-    compile 'com.google.android.gms:play-services-ads:9.4.0'
+    compile 'com.google.android.gms:play-services-ads:9.6.1'
 }
 
+def siteUrl = 'https://github.com/lukasvalik/NicheAppUtils'      // Homepage URL of the library
+def gitUrl = 'https://github.com/lukasvalik/NicheAppUtils.git'   // Git repository URL
+group = "com.github.lukasvalik.nicheapputils"                      // Maven Group ID for the artifact
+
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+
+                // Add your description here
+                name 'Niche App Utils'
+                description = 'The project aims to provide a reusable blocks used while developing niche apps with heavy load of ads.'
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'lukasvalik'
+                        name 'Lukas Valik'
+                        email 'lukassvalik@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+// https://github.com/bintray/gradle-bintray-plugin
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        // it is the name that appears in bintray when logged
+        name = "nicheapputils"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+            gpg {
+                sign = true //Determines whether to GPG sign the files. The default is false
+                passphrase = properties.getProperty("bintray.gpg.password")
+                //Optional. The passphrase for GPG signing'
+            }
+//            mavenCentralSync {
+//                sync = true //Optional (true by default). Determines whether to sync the version to Maven Central.
+//                user = properties.getProperty("bintray.oss.user") //OSS user token
+//                password = properties.getProperty("bintray.oss.password") //OSS user password
+//                close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+//            }
+        }
+    }
+}

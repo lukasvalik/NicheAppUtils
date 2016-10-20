@@ -12,6 +12,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         NicheAppUtils.initFloatingIcon(
                 R.mipmap.ic_launcher,
                 getResources().getString(R.string.floating_title),

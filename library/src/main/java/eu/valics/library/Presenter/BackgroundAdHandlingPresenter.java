@@ -11,7 +11,7 @@ import eu.valics.library.Utils.Ads.InterstitialAdCreator;
 /**
  * Created by L on 9/7/2016.
  */
-public abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.InterstitialListener {
+abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.InterstitialListener {
 
     protected Context mContext;
     protected AppInfo mAppInfo;
@@ -56,9 +56,13 @@ public abstract class BackgroundAdHandlingPresenter implements InterstitialAdCre
         } else {
             mAppInfo.setShowingInterstitialAd(false);
         }
-        mAppInfo.setLoadingOfAdIsDone(false);
+        if (!mAppInfo.isShowingInterstitialAd())
+            mAppInfo.setLoadingOfAdIsDone(false);
     }
 
+    protected void setAdFrequency(int adFrequency){
+        mAdFrequency = adFrequency;
+    }
 
     private void startTimer() {
         BackgroundChecker.get(mContext).startBackgroundCheckerTimer();

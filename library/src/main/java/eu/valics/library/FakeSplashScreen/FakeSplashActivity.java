@@ -129,7 +129,7 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     /**
      *
-     * @param frequency number of opening app or returning to app from background without showing AD
+     * frequency number of opening app or returning to app from background without showing AD
      */
 
     protected void setAdFrequency(int frequency){

@@ -6,6 +6,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
+import eu.valics.library.NicheAppUtils;
+
 /**
  * Created by L on 9/7/2016.
  */
@@ -21,6 +23,11 @@ public class InterstitialAdCreator {
      * showInterstatial handles not loaded as well and skips it
      */
 
+    // not implemented change yet
+    public enum state {
+        NOT_LOADING, IS_LOADING, LOADED
+    }
+
     public interface InterstitialListener{
         void onLoadedAd();
         void onShowedAd();
@@ -32,18 +39,25 @@ public class InterstitialAdCreator {
 
     private InterstitialListener mListener;
 
+    private state mState;
+
     private InterstitialAdCreator(Context context){
 
         mInterstitialAd = new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId(DEV_INTERSTITIAL_AD_ID);
+        if (NicheAppUtils.getInterstitialAdId() != null)
+            mInterstitialAd.setAdUnitId(NicheAppUtils.getInterstitialAdId());
+        else
+            mInterstitialAd.setAdUnitId(DEV_INTERSTITIAL_AD_ID);
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded(){
+                mState = state.LOADED;
                 if(mListener !=null)
                     mListener.onLoadedAd();
             }
             @Override
             public void onAdClosed() {
+                mState = state.NOT_LOADING;
                 if(mListener !=null)
                     mListener.onClosedAd();
             }
@@ -71,9 +85,11 @@ public class InterstitialAdCreator {
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         try {
+            mState = state.IS_LOADING;
             mInterstitialAd.loadAd(adRequest);
         } catch (Exception e){
             //Log.e("Unable to load ad", e.getMessage());
+            mState = state.NOT_LOADING;
         }
 
     }
@@ -103,5 +119,13 @@ public class InterstitialAdCreator {
 
     public void removeListener(){
         mListener = null;
+    }
+
+    public state getState() {
+        return mState;
+    }
+
+    public void setState(state state) {
+        mState = state;
     }
 }

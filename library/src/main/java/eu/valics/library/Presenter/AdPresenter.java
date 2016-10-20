@@ -19,12 +19,12 @@ import eu.valics.library.NicheAppUtils;
  */
 public class AdPresenter extends BackgroundAdHandlingPresenter {
 
-    public static final String BANNER_AD_DEV_ID = "ca-app-pub-3940256099942544/6300978111";
+    private static final String BANNER_AD_DEV_ID = "ca-app-pub-3940256099942544/6300978111";
 
-    protected AdView mAdView;
+    private AdView mAdView;
     private boolean mAdAlreadyAddedToView = false;
 
-    public AdPresenter(Context context) {
+    AdPresenter(Context context) {
         super(context);
     }
 
@@ -81,9 +81,9 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
      * This method is meant to be used in case when we show soft keyboard and we need to remove ad
      * to not take space while screen is smaller due to expanded soft keyboard
      *
-     * @param activity    need this because we want to update UI thread
-     * @param rootView    parentView, where we can add AdView
-     * @param adContainer this is dummyView, which knows size of ad and holds place for it at the
+     * activity    need this because we want to update UI thread
+     * rootView    parentView, where we can add AdView
+     * adContainer this is dummyView, which knows size of ad and holds place for it at the
      *                    bottom of the screen to prevent overlaying of some views by bannerAd
      */
 
@@ -133,9 +133,9 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
      * This method is meant to be used in case when we show soft keyboard and we need to remove ad
      * to not take space while screen is smaller due to expanded soft keyboard
      *
-     * @param adContainer this is dummyView, which knows size of ad and holds place for it at the
+     * adContainer this is dummyView, which knows size of ad and holds place for it at the
      *                    bottom of the screen to prevent overlaying of some views by bannerAd
-     * @@param rootView parentView, where we can add AdView
+     * rootView parentView, where we can add AdView
      */
 
     public void removeBanner(RelativeLayout rootView, FrameLayout adContainer) {
