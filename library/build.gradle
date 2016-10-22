@@ -3,12 +3,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
 version = "0.1.0"
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "24.0.2"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "0.1.0"
     }
@@ -25,7 +25,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.jsoup:jsoup:1.8.1'
 
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
     //progress bar
     compile 'com.pnikosis:materialish-progress:1.7'
     //Ads
