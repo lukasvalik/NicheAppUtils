@@ -36,12 +36,12 @@ public class FakeLoading {
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    public void startOneSecLoading(final OnFinishedListener onFinishedListener){
+    public void startHalfSecLoading(final OnFinishedListener onFinishedListener){
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 count++;
-                if(count<=100)
+                if(count<=50)
                     mHandler.postDelayed(this, 10);
                 else {
                     onFinishedListener.onFinished();

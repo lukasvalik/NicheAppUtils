@@ -80,10 +80,10 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
                 InterstitialAdCreator.get(this).setListener(this);
                 mFakeLoading.startLoading(this);
             } else {
-                mFakeLoading.startOneSecLoading(this);
+                mFakeLoading.startHalfSecLoading(this);
             }
         } else {
-            mFakeLoading.startOneSecLoading(this);
+            mFakeLoading.startHalfSecLoading(this);
         }
 
         mAppInfo.setGoInBackground(false);
