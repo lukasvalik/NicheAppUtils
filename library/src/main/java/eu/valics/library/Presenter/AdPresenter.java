@@ -24,7 +24,7 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
     private AdView mAdView;
     private boolean mAdAlreadyAddedToView = false;
 
-    AdPresenter(Context context) {
+    public AdPresenter(Context context) {
         super(context);
     }
 
