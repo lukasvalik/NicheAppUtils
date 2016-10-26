@@ -17,6 +17,10 @@ public class FloatingIconPresenter extends AdPresenter {
         super(context);
     }
 
+    public FloatingIconPresenter (Context context, AppInfo appInfo){
+        super(context, appInfo);
+    }
+
     @Override
     public void onResume(){
         super.onResume();

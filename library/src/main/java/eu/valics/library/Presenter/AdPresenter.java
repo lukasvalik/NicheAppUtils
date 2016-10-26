@@ -12,6 +12,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
+import eu.valics.library.AppInfo;
 import eu.valics.library.NicheAppUtils;
 
 /**
@@ -26,6 +27,10 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
 
     public AdPresenter(Context context) {
         super(context);
+    }
+
+    public AdPresenter(Context context, AppInfo appInfo){
+        super(context, appInfo);
     }
 
     public void showBanner(final Activity activity,

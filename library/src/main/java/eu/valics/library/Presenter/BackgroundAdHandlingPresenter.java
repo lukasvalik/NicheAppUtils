@@ -22,6 +22,11 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         mAppInfo = AppInfo.get(context);
     }
 
+    public BackgroundAdHandlingPresenter(Context context, AppInfo appInfo){
+        mContext = context;
+        mAppInfo = appInfo;
+    }
+
     public void onResume() {
         handleBackgroundStateAndInterstitialAd();
         stopTimer();
@@ -80,7 +85,7 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
     @Override
     public void onShowedAd() {
 
-        int bulgarianConstant = 2;
+        int bulgarianConstant = 1; // firstly it was 2, but now I reduced it to 1
 
         mAppInfo.setBufferForInterstitialAd(
                 mAppInfo.getBufferForInterstitialAd() - mAdFrequency - bulgarianConstant);
