@@ -10,22 +10,22 @@ import android.net.NetworkInfo;
  */
 public class AppInfo {
 
-    private static final int BUFFER_DEFAULT = -1;
+    protected static final int BUFFER_DEFAULT = -1;
 
-    private static AppInfo sAppInfo;
-    private Context mContext;
+    protected static AppInfo sAppInfo;
+    protected Context mContext;
 
-    private String APP_PREFERENCIES;
-    private String FIRST_RUN_CHECK;
-    private String BUFFER_FOR_INTERSTATIAL_AD;
+    protected String APP_PREFERENCIES;
+    protected String FIRST_RUN_CHECK;
+    protected String BUFFER_FOR_INTERSTATIAL_AD;
     public String WAS_IN_BACKGROUND;
 
     // this prevents infinite loop of loading screens when there is problem with internet
     // phone thinks is connect, however it is not
-    private boolean loadingOfAdIsDone = false;
+    protected boolean loadingOfAdIsDone = false;
 
     // Prevents before loading multiple ads, if app has very full adBuffer and is opening ad by ad
-    private boolean showingInterstitialAd = false;
+    protected boolean showingInterstitialAd = false;
 
     protected AppInfo(Context context){
         mContext = context;
