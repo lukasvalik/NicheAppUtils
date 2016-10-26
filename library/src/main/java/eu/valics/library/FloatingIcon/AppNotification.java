@@ -16,7 +16,6 @@ import eu.valics.library.NicheAppUtils;
  */
 public class AppNotification {
 
-    public static final int NOTIFICATION_ID = 7787877;
     private int mIconId;
 
     private Context mContext;
@@ -52,12 +51,12 @@ public class AppNotification {
         Notification notification = mBuilder.build();
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-        mManager.notify(NOTIFICATION_ID, notification);
+        mManager.notify(NicheAppUtils.getFloatingIconId(), notification);
 
     }
 
     public void hideNotification() {
-        mManager.cancel(NOTIFICATION_ID);
+        mManager.cancel(NicheAppUtils.getFloatingIconId());
     }
 
     private Bitmap createBitmapFromDrawable(int drawableId){
