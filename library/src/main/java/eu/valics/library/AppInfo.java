@@ -27,7 +27,7 @@ public class AppInfo {
     // Prevents before loading multiple ads, if app has very full adBuffer and is opening ad by ad
     private boolean showingInterstitialAd = false;
 
-    private AppInfo(Context context){
+    protected AppInfo(Context context){
         mContext = context;
 
         APP_PREFERENCIES = mContext.getPackageName();
