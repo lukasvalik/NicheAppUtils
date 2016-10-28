@@ -60,7 +60,9 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
 
                     try {
                         SplashActivityLauncher.launch(mContext); // launcher activity should be splash
+                        Log.d(TAG, "start splash activity");
                     } catch (PackageManager.NameNotFoundException e) {
+                        Log.d(TAG, "splash not found or smt like that");
                         e.printStackTrace();
                     }
                 } else if (!mAppInfo.isOnline())
