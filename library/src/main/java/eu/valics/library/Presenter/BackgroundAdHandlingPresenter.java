@@ -20,12 +20,12 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
     protected int mAdFrequency = 5;
 
     public BackgroundAdHandlingPresenter(Context context) {
-        mContext = context;
+        mContext = context.getApplicationContext();
         mAppInfo = AppInfo.get(context);
     }
 
     public BackgroundAdHandlingPresenter(Context context, AppInfo appInfo){
-        mContext = context;
+        mContext = context.getApplicationContext();
         mAppInfo = appInfo;
     }
 
