@@ -25,6 +25,8 @@ public class SplashActivityLauncher {
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.setComponent(new ComponentName(packageName, mainActivity));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.getComponent() == null)
+                Log.d(TAG, "launch: component == null");
             context.startActivity(intent);
             Log.d(TAG, "after launch: ");
         } else Log.d(TAG, "launchIntent: is null");
