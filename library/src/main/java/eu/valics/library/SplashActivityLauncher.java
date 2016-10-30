@@ -13,7 +13,14 @@ public class SplashActivityLauncher {
 
     private static final String TAG = "BG_AD_LAUNCHER";
 
-    public static void launch(Context context) throws PackageManager.NameNotFoundException {
+    public static void launch(Context context){
+        PackageManager pm = context.getPackageManager();
+        Intent intent = pm.getLaunchIntentForPackage(context.getPackageName());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void launchWorkaround(Context context) throws PackageManager.NameNotFoundException {
         final String packageName = context.getPackageName();
         Log.d(TAG, "packageName: "+ packageName);
         final Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
