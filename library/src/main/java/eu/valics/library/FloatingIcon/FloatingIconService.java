@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,6 +24,7 @@ public class FloatingIconService extends Service {
 
     private FloatingIcon mFloatingIcon;
     private int clickCounter;
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -71,7 +71,7 @@ public class FloatingIconService extends Service {
         }
     }
 
-    private void initFloatingIcon(){
+    private void initFloatingIcon() {
 
         mFloatingIcon = FloatingIcon.get(this);
 
@@ -149,10 +149,6 @@ public class FloatingIconService extends Service {
         AppInfo.get(this).setGoInBackground(true);
         AppInfo.get(this).setShowingInterstitialAd(false);
 
-        try {
-            SplashActivityLauncher.launch(this);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        SplashActivityLauncher.launch(this);
     }
 }
