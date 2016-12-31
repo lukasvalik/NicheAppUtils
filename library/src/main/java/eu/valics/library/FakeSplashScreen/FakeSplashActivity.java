@@ -46,9 +46,6 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
         mContentView = new FakeSplashContentView(this);
         setContentView(mContentView);
-
-        mFakeLoading = new FakeLoading();
-        mAppInfo = AppInfo.get(this);
     }
 
     @Override
@@ -67,6 +64,9 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     }
 
     private void interstitialAdLogic(){
+
+        mFakeLoading = new FakeLoading();
+        mAppInfo = AppInfo.get(this);
 
         if (mAppInfo.isOnline()) {
             if (mAppInfo.isFirstRun()) {
