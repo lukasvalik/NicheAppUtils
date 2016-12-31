@@ -4,5 +4,7 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="NoActionBarActivity" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="NoActionBarActivity" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
 </resources>
