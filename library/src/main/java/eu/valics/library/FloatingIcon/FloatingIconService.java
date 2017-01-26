@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -66,11 +65,6 @@ public class FloatingIconService extends Service {
             i.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, i, 0);
             am.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, pendingIntent);
-        } else if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (Settings.canDrawOverlays(this)){
-                Intent i = new Intent(NicheAppUtils.getFloatingServiceRestartPhrase());
-                sendBroadcast(i);
-            }
         } else {
             Intent i = new Intent(NicheAppUtils.getFloatingServiceRestartPhrase());
             sendBroadcast(i);

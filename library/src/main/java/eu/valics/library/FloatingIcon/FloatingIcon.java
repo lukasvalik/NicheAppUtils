@@ -42,14 +42,18 @@ public class FloatingIcon extends ImageView {
         //params.y = 100;
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (Settings.canDrawOverlays(context))
+            if (Settings.canDrawOverlays(context)) {
                 windowManager.addView(this, params);
+
+                setState(NOTIFICATION_STATE);
+                AppNotification.get(context).createNotificationForFloatingIcon();
+            }
         } else {
             windowManager.addView(this, params);
-        }
 
-        setState(NOTIFICATION_STATE);
-        AppNotification.get(context).createNotificationForFloatingIcon();
+            setState(NOTIFICATION_STATE);
+            AppNotification.get(context).createNotificationForFloatingIcon();
+        }
     }
 
     public FloatingIcon(Context context, AttributeSet attrs) {
