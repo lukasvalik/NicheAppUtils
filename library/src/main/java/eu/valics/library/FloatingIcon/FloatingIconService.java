@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +48,13 @@ public class FloatingIconService extends Service {
             }
         }
 
-        return START_STICKY;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this))
+                return START_STICKY;
+            else
+                return START_NOT_STICKY;
+        } else
+            return START_STICKY;
     }
 
     @Override
