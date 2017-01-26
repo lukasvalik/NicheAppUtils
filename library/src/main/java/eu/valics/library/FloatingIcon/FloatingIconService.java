@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -37,13 +38,22 @@ public class FloatingIconService extends Service {
         if (mFloatingIcon == null)
             initFloatingIcon();
 
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
+                mFloatingIcon.setState(FloatingIcon.NOTIFICATION_STATE);
+                AppNotification.get(this).createNotificationForFloatingIcon();
+            }
+        }
+
         if (intent != null) {
             if (intent.getExtras() != null) {
                 mFloatingIcon.setState(FloatingIcon.SHOW_STATE);
                 AppNotification.get(this).hideNotification();
             } else {
-                mFloatingIcon.setState(FloatingIcon.NOTIFICATION_STATE);
-                AppNotification.get(this).createNotificationForFloatingIcon();
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(this)) {
+                    mFloatingIcon.setState(FloatingIcon.NOTIFICATION_STATE);
+                    AppNotification.get(this).createNotificationForFloatingIcon();
+                }
             }
         }
 
