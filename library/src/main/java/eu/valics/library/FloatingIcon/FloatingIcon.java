@@ -2,6 +2,8 @@ package eu.valics.library.FloatingIcon;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.WindowManager;
@@ -39,7 +41,12 @@ public class FloatingIcon extends ImageView {
         params.x = 0;
         //params.y = 100;
 
-        windowManager.addView(this, params);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (Settings.canDrawOverlays(context))
+                windowManager.addView(this, params);
+        } else {
+            windowManager.addView(this, params);
+        }
 
         setState(NOTIFICATION_STATE);
         AppNotification.get(context).createNotificationForFloatingIcon();
