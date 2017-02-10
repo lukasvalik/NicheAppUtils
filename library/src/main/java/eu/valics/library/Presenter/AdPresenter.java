@@ -88,8 +88,10 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
 
 
     public void hideBanner() {
-        mAdView.setVisibility(View.GONE);
-        mAdView.setEnabled(false);
+        if (mAdView != null) {
+            mAdView.setVisibility(View.GONE);
+            mAdView.setEnabled(false);
+        }
     }
 
     /**
@@ -154,7 +156,8 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
      */
 
     public void removeBanner(RelativeLayout rootView, FrameLayout adContainer) {
-        rootView.removeView(mAdView);
+        if (mAdView != null)
+            rootView.removeView(mAdView);
         adContainer.setVisibility(View.GONE);
     }
 }
