@@ -1,6 +1,7 @@
 package eu.valics.library.Presenter;
 
 import android.content.Context;
+import android.widget.RelativeLayout;
 
 import eu.valics.library.AppInfo;
 import eu.valics.library.SplashActivityLauncher;
@@ -32,7 +33,7 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         stopTimer();
     }
 
-    public void onPause() {
+    public void onPause(RelativeLayout rootView) {
         startTimer();
         if (!mAppInfo.isShowingInterstitialAd())
             InterstitialAdCreator.get(mContext).removeListener();

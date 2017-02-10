@@ -2,6 +2,7 @@ package eu.valics.library.Presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.RelativeLayout;
 
 import eu.valics.library.AppInfo;
 import eu.valics.library.FloatingIcon.AppNotification;
@@ -29,8 +30,8 @@ public class FloatingIconPresenter extends AdPresenter {
     }
 
     @Override
-    public void onPause(){
-        super.onPause();
+    public void onPause(RelativeLayout rootView){
+        super.onPause(rootView);
     }
 
     public void putFloatingIconToNotification() {
