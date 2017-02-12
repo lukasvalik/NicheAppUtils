@@ -34,13 +34,16 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
     }
 
     @Override
-    public void onPause(RelativeLayout rootView) {
+    public void onPause() {
+        super.onPause();
+    }
+
+    public void clearAdView(RelativeLayout rootView){
         if (mAdView != null) {
             mAdView.destroy();
             rootView.removeView(mAdView);
             mAdView = null;
         }
-        super.onPause(rootView);
     }
 
     public void showBanner(final Activity activity,
