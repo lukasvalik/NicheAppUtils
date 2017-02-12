@@ -73,8 +73,18 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         }
     }
 
+    protected boolean isGoingToShowInterstitialAd(){
+        return (mAppInfo.wasInBackground() && !mAppInfo.isShowingInterstitialAd() &&
+                mAppInfo.getBufferForInterstitialAd() + 1 >= mAdFrequency &&
+                InterstitialAdCreator.get(mContext).getInterstitialAd().isLoaded());
+    }
+
     protected void setAdFrequency(int adFrequency) {
         mAdFrequency = adFrequency;
+    }
+
+    protected int getAdFrequency(){
+        return mAdFrequency;
     }
 
     private void startTimer() {
