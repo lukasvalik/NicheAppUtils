@@ -146,7 +146,8 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onLoadedAd() {
-        onFinished();
+        waitTillAdWillClose = true;
+        InterstitialAdCreator.get(this).showInterstatialAd();
     }
 
     @Override
@@ -160,7 +161,7 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     @Override
     public void onClosedAd() {
         waitTillAdWillClose = false;
-        moveToNextActivity();
+        onFinished();
     }
 
     @Override
@@ -177,21 +178,6 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onFinished() {
-        if (mAppInfo.isFirstSplashBeforeMainActivity() && isGoingToShowInterstitialAd()) {
-            waitTillAdWillClose = true;
-            InterstitialAdCreator.get(this).showInterstatialAd();
-        } else {
-            moveToNextActivity();
-        }
-    }
-
-    private boolean isGoingToShowInterstitialAd(){
-        return (mAppInfo.wasInBackground() && !mAppInfo.isShowingInterstitialAd() &&
-                mAppInfo.getBufferForInterstitialAd() + 1 >= mAdFrequency &&
-                InterstitialAdCreator.get(this).getInterstitialAd().isLoaded());
-    }
-
-    private void moveToNextActivity() {
         InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setGoInBackground(true);
         startActivity(getParentActivityIntent());
