@@ -38,6 +38,8 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     private int mAdFrequency = 5;
     private AppInfo mAppInfo;
 
+    private boolean waitTillAdWillClose = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +98,8 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
         InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setLoadingOfAdIsDone(true);
         super.onPause();
-        finish();
+        if (!waitTillAdWillClose)
+            finish();
     }
 
     /**
@@ -142,7 +145,6 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onLoadedAd() {
-        InterstitialAdCreator.get(this).removeListener();
         onFinished();
     }
 
@@ -153,7 +155,8 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onClosedAd() {
-
+        waitTillAdWillClose = false;
+        moveToNextActivity();
     }
 
     @Override
@@ -170,7 +173,24 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onFinished() {
+        if (mAppInfo.isFirstSplashBeforeMainActivity() && isGoingToShowInterstitialAd()) {
+            waitTillAdWillClose = true;
+            InterstitialAdCreator.get(this).showInterstatialAd();
+        } else {
+            moveToNextActivity();
+        }
+    }
+
+    private boolean isGoingToShowInterstitialAd(){
+        return (mAppInfo.wasInBackground() && !mAppInfo.isShowingInterstitialAd() &&
+                mAppInfo.getBufferForInterstitialAd() + 1 >= mAdFrequency &&
+                InterstitialAdCreator.get(this).getInterstitialAd().isLoaded());
+    }
+
+    private void moveToNextActivity() {
+        InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setGoInBackground(true);
+        mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - 1);
         startActivity(getParentActivityIntent());
     }
 }

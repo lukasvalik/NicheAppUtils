@@ -27,8 +27,12 @@ public class AppInfo {
     // Prevents before loading multiple ads, if app has very full adBuffer and is opening ad by ad
     protected boolean showingInterstitialAd = false;
 
+    protected boolean firstSplashBeforeMainActivity;
+
     protected AppInfo(Context context){
         mContext = context;
+
+        firstSplashBeforeMainActivity = true;
 
         APP_PREFERENCIES = mContext.getPackageName();
         FIRST_RUN_CHECK = APP_PREFERENCIES + ".isFirstRun";
@@ -107,5 +111,13 @@ public class AppInfo {
 
     public void setShowingInterstitialAd(boolean alreadyShowedInterstitialAd) {
         this.showingInterstitialAd = alreadyShowedInterstitialAd;
+    }
+
+    public boolean isFirstSplashBeforeMainActivity() {
+        return firstSplashBeforeMainActivity;
+    }
+
+    public void setFirstSplashBeforeMainActivity(boolean first){
+        firstSplashBeforeMainActivity = first;
     }
 }
