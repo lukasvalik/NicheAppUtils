@@ -93,13 +93,14 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onPause(){
-        BackgroundChecker.get(this).startBackgroundCheckerTimer();
         mFakeLoading.unregister();
-        InterstitialAdCreator.get(this).removeListener();
+        //InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setLoadingOfAdIsDone(true);
         super.onPause();
-        if (!waitTillAdWillClose)
+        if (!waitTillAdWillClose) {
+            BackgroundChecker.get(this).startBackgroundCheckerTimer();
             finish();
+        }
     }
 
     /**
@@ -150,7 +151,10 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onShowedAd() {
+        int bulgarianConstant = 2; // firstly it was 2, but now I reduced it to 1
 
+        mAppInfo.setBufferForInterstitialAd(
+                mAppInfo.getBufferForInterstitialAd() - mAdFrequency - bulgarianConstant);
     }
 
     @Override
@@ -190,7 +194,6 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     private void moveToNextActivity() {
         InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setGoInBackground(true);
-        mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - 1);
         startActivity(getParentActivityIntent());
     }
 }
