@@ -55,7 +55,8 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
                 } else if (mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone()) {
 
                     //Log.d(TAG, "online and loading of app not done");
-
+                    int decreaseAdBuffer = mAppInfo.getBufferForInterstitialAd() - 1;
+                    mAppInfo.setBufferForInterstitialAd(decreaseAdBuffer);
                     SplashActivityLauncher.launch(mContext); // launcher activity should be splash
                     //Log.d(TAG, "start splash activity");
                 } /*else if (!mAppInfo.isOnline())
@@ -87,11 +88,11 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         return mAdFrequency;
     }
 
-    private void startTimer() {
+    protected void startTimer() {
         BackgroundChecker.get(mContext).startBackgroundCheckerTimer();
     }
 
-    private void stopTimer() {
+    protected void stopTimer() {
         BackgroundChecker.get(mContext).stopBackgroundCheckerTimer();
     }
 
