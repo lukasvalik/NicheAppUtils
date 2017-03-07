@@ -97,10 +97,10 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
         //InterstitialAdCreator.get(this).removeListener();
         mAppInfo.setLoadingOfAdIsDone(true);
         super.onPause();
-        if (!waitTillAdWillClose) {
+        //if (!waitTillAdWillClose) {
             BackgroundChecker.get(this).startBackgroundCheckerTimer();
             finish();
-        }
+        //}
     }
 
     /**
@@ -146,7 +146,7 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
     @Override
     public void onLoadedAd() {
-        waitTillAdWillClose = true;
+        //waitTillAdWillClose = true;
         InterstitialAdCreator.get(this).showInterstatialAd();
     }
 
@@ -156,12 +156,14 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
 
         mAppInfo.setBufferForInterstitialAd(
                 mAppInfo.getBufferForInterstitialAd() - mAdFrequency - bulgarianConstant);
+
+        onFinished();
     }
 
     @Override
     public void onClosedAd() {
-        waitTillAdWillClose = false;
-        onFinished();
+        //waitTillAdWillClose = false;
+        //onFinished();
     }
 
     @Override
