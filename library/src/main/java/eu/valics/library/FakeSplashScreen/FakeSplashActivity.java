@@ -2,6 +2,7 @@ package eu.valics.library.FakeSplashScreen;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,7 +21,7 @@ import eu.valics.library.Utils.Ads.OnFinishedListener;
 /**
  * Created by L on 9/7/2016.
  */
-public class FakeSplashActivity extends AppCompatActivity implements OnFinishedListener,
+public abstract class FakeSplashActivity extends AppCompatActivity implements OnFinishedListener,
         InterstitialAdCreator.InterstitialListener{
 
     private View mContentView;
@@ -30,15 +31,19 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     private ProgressWheel mProgressWheel;
     private TextView mLoadingTextView;
 
-    protected int mBackgroundColor;
-    protected Drawable mLogoDrawable;
-    protected int mProgressWheelColor;
-    protected int mLoadingTextColor;
+    private int mBackgroundColor;
+    private int mBackgroundDrawable;
+    private Drawable mLogoDrawable;
+    private int mProgressWheelColor;
+    private int mLoadingTextColor;
 
     private int mAdFrequency = 5;
-    private AppInfo mAppInfo;
 
+    private AppInfo mAppInfo;
     private boolean waitTillAdWillClose = false;
+
+    private enum BackgroundType {COLOR, DRAWABLE}
+    private BackgroundType mBackgroundType = BackgroundType.COLOR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,14 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     @Override
     protected void onStart() {
         super.onStart();
-        setBackgroundColor(mBackgroundColor);
+        mBackgroundType = getBackgroundType();
+
+        switch (mBackgroundType) {
+            case COLOR: setBackgroundColor(mBackgroundColor); break;
+            case DRAWABLE: setBackgroundDrawable(mBackgroundDrawable); break;
+            default:
+                throw new IllegalStateException("Incorrect BackgroundState");
+        }
         setLogo(mLogoDrawable);
         setProgressColor(mProgressWheelColor);
         setLoadingTextColor(mLoadingTextColor);
@@ -112,6 +124,11 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
         mRootView.setBackgroundColor(color);
     }
 
+    protected void setBackgroundDrawable(int drawableResId){
+        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
+        mRootView.setBackground(ContextCompat.getDrawable(this, drawableResId));
+    }
+
     protected void setLogo(Drawable logoDrawable){
         mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
         mLogoImage.setImageDrawable(logoDrawable);
@@ -130,6 +147,13 @@ public class FakeSplashActivity extends AppCompatActivity implements OnFinishedL
     protected void setFullscreen(){
         setTheme(R.style.NoActionBarFullscreenActivity);
     }
+
+    /**
+     *
+     * @return whether background will be drawable or color
+     */
+
+    protected abstract BackgroundType getBackgroundType();
 
     /**
      *
