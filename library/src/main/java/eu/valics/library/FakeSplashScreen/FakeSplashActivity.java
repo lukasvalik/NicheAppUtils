@@ -31,19 +31,19 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     private ProgressWheel mProgressWheel;
     private TextView mLoadingTextView;
 
-    private int mBackgroundColor;
-    private int mBackgroundDrawable;
-    private Drawable mLogoDrawable;
-    private int mProgressWheelColor;
-    private int mLoadingTextColor;
+    protected int mBackgroundColor;
+    protected int mBackgroundDrawable;
+    protected Drawable mLogoDrawable;
+    protected int mProgressWheelColor;
+    protected int mLoadingTextColor;
 
     private int mAdFrequency = 5;
 
     private AppInfo mAppInfo;
     private boolean waitTillAdWillClose = false;
 
-    private enum BackgroundType {COLOR, DRAWABLE}
-    private BackgroundType mBackgroundType = BackgroundType.COLOR;
+    protected enum BackgroundType {COLOR, DRAWABLE}
+    protected BackgroundType mBackgroundType = BackgroundType.COLOR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

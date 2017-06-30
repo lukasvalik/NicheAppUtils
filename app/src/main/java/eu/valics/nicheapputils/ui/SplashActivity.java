@@ -18,4 +18,9 @@ public class SplashActivity extends FakeSplashActivity {
         mProgressWheelColor = ContextCompat.getColor(this, R.color.colorPrimary);
         mLoadingTextColor = ContextCompat.getColor(this, R.color.colorPrimary);
     }
+
+    @Override
+    protected FakeSplashActivity.BackgroundType getBackgroundType() {
+        return BackgroundType.COLOR;
+    }
 }
