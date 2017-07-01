@@ -2,7 +2,6 @@ package eu.valics.library.FakeSplashScreen;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,12 +26,13 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     private View mContentView;
     private FakeLoading mFakeLoading;
     private RelativeLayout mRootView;
+    private ImageView mBackgroundImage;
     private ImageView mLogoImage;
     private ProgressWheel mProgressWheel;
     private TextView mLoadingTextView;
 
     protected int mBackgroundColor;
-    protected int mBackgroundDrawable;
+    protected Drawable mBackgroundDrawable;
     protected Drawable mLogoDrawable;
     protected int mProgressWheelColor;
     protected int mLoadingTextColor;
@@ -53,6 +53,12 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
         mContentView = new FakeSplashContentView(this);
         setContentView(mContentView);
+
+        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
+        mBackgroundImage = (ImageView) mContentView.findViewById(R.id.backgroundImage);
+        mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
+        mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
+        mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
     }
 
     @Override
@@ -120,27 +126,22 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
      */
 
     protected void setBackgroundColor(int color){
-        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
         mRootView.setBackgroundColor(color);
     }
 
-    protected void setBackgroundDrawable(int drawableResId){
-        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
-        mRootView.setBackground(ContextCompat.getDrawable(this, drawableResId));
+    protected void setBackgroundDrawable(Drawable drawable){
+        mBackgroundImage.setImageDrawable(drawable);
     }
 
     protected void setLogo(Drawable logoDrawable){
-        mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
         mLogoImage.setImageDrawable(logoDrawable);
     }
 
     protected void setProgressColor(int color){
-        mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
         mProgressWheel.setBarColor(color);
     }
 
     protected void setLoadingTextColor(int color){
-        mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
         mLoadingTextView.setTextColor(color);
     }
 
