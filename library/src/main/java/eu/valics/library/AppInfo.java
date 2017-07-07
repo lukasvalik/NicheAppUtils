@@ -120,4 +120,14 @@ public class AppInfo {
     public void setFirstSplashBeforeMainActivity(boolean first){
         firstSplashBeforeMainActivity = first;
     }
+
+    public void setAskedPermission(int permissionRequestCode) {
+        mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE).edit()
+                .putBoolean("Permission_" + Integer.toString(permissionRequestCode), true).apply();
+    }
+
+    public boolean wasAskedPermission(int permissionRequestCode) {
+        return mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE)
+                .getBoolean("Permission_" + Integer.toString(permissionRequestCode), false);
+    }
 }

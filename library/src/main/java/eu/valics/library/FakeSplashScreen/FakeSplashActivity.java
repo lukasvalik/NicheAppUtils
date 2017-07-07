@@ -53,17 +53,12 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
         mContentView = new FakeSplashContentView(this);
         setContentView(mContentView);
-
-        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
-        mBackgroundImage = (ImageView) mContentView.findViewById(R.id.backgroundImage);
-        mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
-        mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
-        mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        initViews();
         mBackgroundType = getBackgroundType();
 
         switch (mBackgroundType) {
@@ -75,6 +70,14 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
         setLogo(mLogoDrawable);
         setProgressColor(mProgressWheelColor);
         setLoadingTextColor(mLoadingTextColor);
+    }
+
+    private void initViews() {
+        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
+        mBackgroundImage = (ImageView) mContentView.findViewById(R.id.backgroundImage);
+        mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
+        mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
+        mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
     }
 
     @Override

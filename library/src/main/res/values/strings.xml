@@ -6,4 +6,8 @@
 
     <string name="banner_ad_id">ca-app-pub-6661413270831886/6161250458</string>
     <string name="interstitial_ad_id">ca-app-pub-6661413270831886/4684517251</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">CANCEL</string>
+    <string name="notification_access_title">Notification access</string>
+    <string name="notification_access_message">We need notification access granted to use flash alert on incoming notification event</string>
 </resources>

@@ -15,12 +15,13 @@ public class SplashActivity extends FakeSplashActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.loading_screen);
         mProgressWheelColor = ContextCompat.getColor(this, R.color.colorPrimary);
         mLoadingTextColor = ContextCompat.getColor(this, R.color.colorPrimary);
     }
 
     @Override
     protected FakeSplashActivity.BackgroundType getBackgroundType() {
-        return BackgroundType.COLOR;
+        return BackgroundType.DRAWABLE;
     }
 }
