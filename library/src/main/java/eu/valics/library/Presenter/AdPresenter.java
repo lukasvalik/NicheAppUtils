@@ -1,7 +1,6 @@
 package eu.valics.library.Presenter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,7 +11,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
-import eu.valics.library.AppInfo;
 import eu.valics.library.NicheAppUtils;
 
 /**
@@ -24,19 +22,6 @@ public class AdPresenter extends BackgroundAdHandlingPresenter {
 
     private AdView mAdView;
     private boolean mAdAlreadyAddedToView = false;
-
-    public AdPresenter(Context context) {
-        super(context);
-    }
-
-    public AdPresenter(Context context, AppInfo appInfo){
-        super(context, appInfo);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
     public void clearAdView(RelativeLayout rootView){
         if (mAdView != null) {

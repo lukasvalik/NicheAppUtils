@@ -2,7 +2,7 @@ package eu.valics.library.Utils.permissionmanagement.Permission;
 
 import android.Manifest;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
 import eu.valics.library.Utils.permissionmanagement.BasePermission;
 import eu.valics.library.Utils.permissionmanagement.DangerousPermission;
 

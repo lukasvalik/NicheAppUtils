@@ -10,7 +10,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
 
 /**
  * Created by L on 7/7/2017.

@@ -1,11 +1,9 @@
 package eu.valics.library.Utils.Ads;
 
-import android.content.Context;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.BaseApplication;
 
 /**
  * Created by L on 9/7/2016.
@@ -14,28 +12,15 @@ public class BackgroundChecker {
 
     private static final long MAX_BETWEEN_ACTIVITY_TIME_MS = 2000;
 
-    private static BackgroundChecker sBackgroundChecker;
-    private Context mContext;
-
     private Timer mTimer;
     private TimerTask mTimerTask;
-
-    private BackgroundChecker(Context context) {
-        mContext = context;
-    }
-
-    public static BackgroundChecker get(Context context){
-        if (sBackgroundChecker == null)
-            sBackgroundChecker = new BackgroundChecker(context.getApplicationContext());
-        return sBackgroundChecker;
-    }
 
     public void startBackgroundCheckerTimer() {
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                AppInfo.get(mContext).setGoInBackground(true);
+                BaseApplication.getInstance().getAppInfo().setGoInBackground(true);
             }
         };
 
@@ -49,6 +34,6 @@ public class BackgroundChecker {
         if (mTimer != null)
             mTimer.cancel();
 
-        AppInfo.get(mContext).setGoInBackground(false);
+        BaseApplication.getInstance().getAppInfo().setGoInBackground(false);
     }
 }

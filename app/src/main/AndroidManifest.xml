@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.SplashActivity"
-                  android:parentActivityName=".ui.main.MainActivity">
+                  android:parentActivityName=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 
@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.main.MainActivity"/>
+        <activity android:name=".ui.MainActivity"/>
 
         <receiver
             android:name="eu.valics.library.FloatingIcon.RestartService"

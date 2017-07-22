@@ -1,7 +1,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
-version = "0.4.1"
+apply plugin: "me.tatarka.retrolambda"
+version = "0.5.0"
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.2"
@@ -10,13 +11,17 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "0.4.1"
+        versionName "0.5.0"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -25,11 +30,18 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'org.jsoup:jsoup:1.8.1'
 
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.1.1'
     //progress bar
     compile 'com.pnikosis:materialish-progress:1.7'
     //Ads
     compile 'com.google.android.gms:play-services-ads:9.6.1'
+
+    //RxAndroid
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.0.0'
 }
 
 def siteUrl = 'https://github.com/lukasvalik/NicheAppUtils'      // Homepage URL of the library

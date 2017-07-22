@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
 import eu.valics.library.R;
 
 /**

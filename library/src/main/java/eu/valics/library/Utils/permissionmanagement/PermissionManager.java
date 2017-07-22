@@ -9,14 +9,15 @@ import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppPausingProcess;
+import eu.valics.library.Base.AppInfo;
 import eu.valics.library.R;
 
 /**
  * Created by L on 7/7/2017.
  */
 
-public class PermissionManager implements PermissionManagement {
+public class PermissionManager implements PermissionManagement, AppPausingProcess {
 
     private PermissionInvalidationListener mListener;
 
@@ -279,6 +280,22 @@ public class PermissionManager implements PermissionManagement {
             if (permissionGroup.getTitle().equals(title) && permissionGroup.isEnabled(context))
                 return true;
         }
+        return false;
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public boolean finish() {
+        invalidatePermissions(false);
+        return mPermissionInProgress == null;
+    }
+
+    @Override
+    public boolean isDefault() {
         return false;
     }
 

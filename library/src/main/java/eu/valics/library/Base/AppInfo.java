@@ -1,4 +1,4 @@
-package eu.valics.library;
+package eu.valics.library.Base;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -12,7 +12,6 @@ public class AppInfo {
 
     protected static final int BUFFER_DEFAULT = -1;
 
-    protected static AppInfo sAppInfo;
     protected Context mContext;
 
     protected String APP_PREFERENCIES;
@@ -24,13 +23,13 @@ public class AppInfo {
     // phone thinks is connect, however it is not
     protected boolean loadingOfAdIsDone = false;
 
-    // Prevents before loading multiple ads, if app has very full adBuffer and is opening ad by ad
-    protected boolean showingInterstitialAd = false;
-
     protected boolean firstSplashBeforeMainActivity;
+    private int mAdFrequency;
 
-    protected AppInfo(Context context){
+    public AppInfo(Context context){
         mContext = context;
+
+        mAdFrequency = 5;
 
         firstSplashBeforeMainActivity = true;
 
@@ -38,12 +37,6 @@ public class AppInfo {
         FIRST_RUN_CHECK = APP_PREFERENCIES + ".isFirstRun";
         BUFFER_FOR_INTERSTATIAL_AD = APP_PREFERENCIES + ".bufferForInterstitialAd";
         WAS_IN_BACKGROUND = APP_PREFERENCIES + ".was_in_background";
-    }
-
-    public static AppInfo get(Context context){
-        if (sAppInfo == null)
-            sAppInfo = new AppInfo(context.getApplicationContext());
-        return sAppInfo;
     }
 
     public boolean isOnline(){
@@ -70,12 +63,12 @@ public class AppInfo {
 
     public void wasFirstRun(){
         mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE).edit()
-                .putBoolean(FIRST_RUN_CHECK, false).commit();
+                .putBoolean(FIRST_RUN_CHECK, false).apply();
     }
 
     public void setBufferForInterstitialAd(int t){
         mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE).edit()
-                .putInt(BUFFER_FOR_INTERSTATIAL_AD, t).commit();
+                .putInt(BUFFER_FOR_INTERSTATIAL_AD, t).apply();
     }
 
     public int getBufferForInterstitialAd(){
@@ -90,7 +83,7 @@ public class AppInfo {
 
     public void setGoInBackground(boolean goingToBackground){
         mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE).edit().
-                putBoolean(WAS_IN_BACKGROUND, goingToBackground).commit();
+                putBoolean(WAS_IN_BACKGROUND, goingToBackground).apply();
     }
 
     /**
@@ -103,14 +96,6 @@ public class AppInfo {
 
     public void setLoadingOfAdIsDone(boolean loadingOfAppIsDone) {
         this.loadingOfAdIsDone = loadingOfAppIsDone;
-    }
-
-    public boolean isShowingInterstitialAd() {
-        return showingInterstitialAd;
-    }
-
-    public void setShowingInterstitialAd(boolean alreadyShowedInterstitialAd) {
-        this.showingInterstitialAd = alreadyShowedInterstitialAd;
     }
 
     public boolean isFirstSplashBeforeMainActivity() {
@@ -129,5 +114,17 @@ public class AppInfo {
     public boolean wasAskedPermission(int permissionRequestCode) {
         return mContext.getSharedPreferences(APP_PREFERENCIES, Context.MODE_PRIVATE)
                 .getBoolean("Permission_" + Integer.toString(permissionRequestCode), false);
+    }
+
+    /**
+     * InterstitialAdConstants
+     */
+
+    public int getAdFrequency() {
+        return mAdFrequency;
+    }
+
+    void setAdFrequency(int adFrequency) {
+        mAdFrequency = adFrequency;
     }
 }

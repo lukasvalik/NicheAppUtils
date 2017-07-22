@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
 import eu.valics.library.R;
 import eu.valics.library.Utils.permissionmanagement.SettingsPermission;
 

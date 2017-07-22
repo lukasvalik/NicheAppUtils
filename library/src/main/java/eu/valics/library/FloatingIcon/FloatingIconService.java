@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.BaseApplication;
 import eu.valics.library.NicheAppUtils;
 import eu.valics.library.SplashActivityLauncher;
 
@@ -156,8 +156,8 @@ public class FloatingIconService extends Service {
     }
 
     private void startApp() {
-        AppInfo.get(this).setGoInBackground(true);
-        AppInfo.get(this).setShowingInterstitialAd(false);
+        BaseApplication.getInstance().getAppInfo().setGoInBackground(true);
+        //BaseApplication.getInstance().getAppInfo().setShowingInterstitialAd(false); // Problem with Ads? This maybe need to be working
 
         SplashActivityLauncher.launch(this);
     }

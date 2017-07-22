@@ -1,13 +1,21 @@
 <resources>
     <string name="app_name">Library</string>
 
-    <string name="banner_ad">ca-app-pub-7127110044918326/3456304496</string>
-    <string name="interstitial_ad">ca-app-pub-7127110044918326/9363237294</string>
+    <string name="banner_ad_id_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_ad_id_test">ca-app-pub-3940256099942544/1033173712</string>
 
-    <string name="banner_ad_id">ca-app-pub-6661413270831886/6161250458</string>
-    <string name="interstitial_ad_id">ca-app-pub-6661413270831886/4684517251</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">CANCEL</string>
+
+    <!-- Permissions -->
     <string name="notification_access_title">Notification access</string>
     <string name="notification_access_message">We need notification access granted to use flash alert on incoming notification event</string>
+
+    <!-- for test cases -->
+    <string name="camera_permission">Camera Permission</string>
+    <string name="camera_permission_permission_description">Camera permission is needed to turn on your phone flashlight during incoming calls or notifications</string>
+    <string name="permission_group_description">App need at least one of these permission to be of any use. Read Phone state lets us use flashlight during incoming call while Notification Access let us to lighting effect to notify you when new Notification arrives.</string>
+    <string name="permission_group_title">Read Phone State and Notification Access Permission</string>
+
+
 </resources>

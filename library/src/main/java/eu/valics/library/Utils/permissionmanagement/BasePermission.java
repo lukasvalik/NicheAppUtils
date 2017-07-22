@@ -3,7 +3,7 @@ package eu.valics.library.Utils.permissionmanagement;
 import android.app.Activity;
 import android.content.Context;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
 
 /**
  * Created by L on 7/7/2017.

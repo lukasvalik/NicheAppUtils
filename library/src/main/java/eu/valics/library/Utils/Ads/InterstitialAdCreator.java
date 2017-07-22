@@ -13,9 +13,9 @@ import eu.valics.library.NicheAppUtils;
  */
 public class InterstitialAdCreator {
 
-    private static final String DEV_INTERSTITIAL_AD_ID = "ca-app-pub-3940256099942544/1033173712";
+    public static final int BULGARIAN_CONSTANT = 1;
 
-    private static InterstitialAdCreator sInterstitialAdCreator;
+    private static final String DEV_INTERSTITIAL_AD_ID = "ca-app-pub-3940256099942544/1033173712";
 
     /**
      * In contructor of Presenter create new Builder.
@@ -41,7 +41,7 @@ public class InterstitialAdCreator {
 
     private state mState;
 
-    private InterstitialAdCreator(Context context){
+    public InterstitialAdCreator(Context context){
 
         mInterstitialAd = new InterstitialAd(context);
         if (NicheAppUtils.getInterstitialAdId() != null)
@@ -63,14 +63,6 @@ public class InterstitialAdCreator {
             }
         });
     }
-
-    public static InterstitialAdCreator get(Context context){
-        if (sInterstitialAdCreator == null)
-            sInterstitialAdCreator = new InterstitialAdCreator(context.getApplicationContext());
-        return sInterstitialAdCreator;
-    }
-
-
 
     public void setAdUnitId(String adUnitId){
         mInterstitialAd.setAdUnitId(adUnitId);

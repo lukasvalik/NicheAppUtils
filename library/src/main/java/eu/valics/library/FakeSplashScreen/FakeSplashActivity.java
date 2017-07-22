@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.pnikosis.materialishprogress.ProgressWheel;
 
-import eu.valics.library.AppInfo;
+import eu.valics.library.Base.AppInfo;
+import eu.valics.library.Base.BaseApplication;
 import eu.valics.library.R;
-import eu.valics.library.Utils.Ads.BackgroundChecker;
 import eu.valics.library.Utils.Ads.FakeLoading;
 import eu.valics.library.Utils.Ads.InterstitialAdCreator;
 import eu.valics.library.Utils.Ads.OnFinishedListener;
@@ -21,7 +21,7 @@ import eu.valics.library.Utils.Ads.OnFinishedListener;
  * Created by L on 9/7/2016.
  */
 public abstract class FakeSplashActivity extends AppCompatActivity implements OnFinishedListener,
-        InterstitialAdCreator.InterstitialListener{
+        InterstitialAdCreator.InterstitialListener {
 
     private View mContentView;
     private FakeLoading mFakeLoading;
@@ -37,13 +37,16 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     protected int mProgressWheelColor;
     protected int mLoadingTextColor;
 
-    private int mAdFrequency = 5;
+    private int mAdFrequency;
+    private InterstitialAdCreator mInterstitialAdCreator;
 
     private AppInfo mAppInfo;
-    private boolean waitTillAdWillClose = false;
 
     protected enum BackgroundType {COLOR, DRAWABLE}
+
     protected BackgroundType mBackgroundType = BackgroundType.COLOR;
+
+    boolean firstRun = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,10 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
         mContentView = new FakeSplashContentView(this);
         setContentView(mContentView);
+
+        BaseApplication application = BaseApplication.getInstance();
+        mAdFrequency = application.getAppInfo().getAdFrequency();
+        mInterstitialAdCreator = application.getInterstitialAdCreator();
     }
 
     @Override
@@ -62,8 +69,12 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
         mBackgroundType = getBackgroundType();
 
         switch (mBackgroundType) {
-            case COLOR: setBackgroundColor(mBackgroundColor); break;
-            case DRAWABLE: setBackgroundDrawable(mBackgroundDrawable); break;
+            case COLOR:
+                setBackgroundColor(mBackgroundColor);
+                break;
+            case DRAWABLE:
+                setBackgroundDrawable(mBackgroundDrawable);
+                break;
             default:
                 throw new IllegalStateException("Incorrect BackgroundState");
         }
@@ -81,26 +92,26 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         interstitialAdLogic();
     }
 
-    private void interstitialAdLogic(){
+    private void interstitialAdLogic() {
 
         mFakeLoading = new FakeLoading();
-        mAppInfo = AppInfo.get(this);
+        mAppInfo = BaseApplication.getInstance().getAppInfo();
 
         if (mAppInfo.isOnline()) {
             if (mAppInfo.isFirstRun()) {
-                mAppInfo.wasFirstRun();
+                firstRun = true;
                 mAppInfo.setBufferForInterstitialAd(mAdFrequency);
-                InterstitialAdCreator.get(this).requestNewInterstitial();
-                InterstitialAdCreator.get(this).setListener(this);
+                mInterstitialAdCreator.requestNewInterstitial();
+                mInterstitialAdCreator.setListener(this);
                 mFakeLoading.startLoading(this);
-            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency-1) {
-                InterstitialAdCreator.get(this).requestNewInterstitial();
-                InterstitialAdCreator.get(this).setListener(this);
+            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency - 1) {
+                mInterstitialAdCreator.requestNewInterstitial();
+                mInterstitialAdCreator.setListener(this);
                 mFakeLoading.startLoading(this);
             } else {
                 mFakeLoading.startHalfSecLoading(this);
@@ -113,60 +124,48 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     }
 
     @Override
-    public void onPause(){
-        mFakeLoading.unregister();
-        //InterstitialAdCreator.get(this).removeListener();
-        mAppInfo.setLoadingOfAdIsDone(true);
+    public void onPause() {
         super.onPause();
-        //if (!waitTillAdWillClose) {
-            BackgroundChecker.get(this).startBackgroundCheckerTimer();
-            finish();
-        //}
+        mFakeLoading.unregister();
+        mInterstitialAdCreator.removeListener();
+        mAppInfo.setLoadingOfAdIsDone(true);
+        BaseApplication.getBackgroundChecker().startBackgroundCheckerTimer();
+        finish();
     }
 
     /**
      * UI Properties
      */
 
-    protected void setBackgroundColor(int color){
+    protected void setBackgroundColor(int color) {
         mRootView.setBackgroundColor(color);
     }
 
-    protected void setBackgroundDrawable(Drawable drawable){
+    protected void setBackgroundDrawable(Drawable drawable) {
         mBackgroundImage.setImageDrawable(drawable);
     }
 
-    protected void setLogo(Drawable logoDrawable){
+    protected void setLogo(Drawable logoDrawable) {
         mLogoImage.setImageDrawable(logoDrawable);
     }
 
-    protected void setProgressColor(int color){
+    protected void setProgressColor(int color) {
         mProgressWheel.setBarColor(color);
     }
 
-    protected void setLoadingTextColor(int color){
+    protected void setLoadingTextColor(int color) {
         mLoadingTextView.setTextColor(color);
     }
 
-    protected void setFullscreen(){
+    protected void setFullscreen() {
         setTheme(R.style.NoActionBarFullscreenActivity);
     }
 
     /**
-     *
      * @return whether background will be drawable or color
      */
 
     protected abstract BackgroundType getBackgroundType();
-
-    /**
-     *
-     * frequency number of opening app or returning to app from background without showing AD
-     */
-
-    protected void setAdFrequency(int frequency){
-        mAdFrequency = frequency;
-    }
 
     /**
      * Interstitial Ad callbacks
@@ -174,24 +173,18 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
     @Override
     public void onLoadedAd() {
-        //waitTillAdWillClose = true;
-        InterstitialAdCreator.get(this).showInterstatialAd();
+        mInterstitialAdCreator.showInterstatialAd();
     }
 
     @Override
     public void onShowedAd() {
-        int bulgarianConstant = 2; // firstly it was 2, but now I reduced it to 1
-
-        mAppInfo.setBufferForInterstitialAd(
-                mAppInfo.getBufferForInterstitialAd() - mAdFrequency - bulgarianConstant);
-
+        if (!firstRun) mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - mAdFrequency - InterstitialAdCreator.BULGARIAN_CONSTANT);
         onFinished();
     }
 
     @Override
     public void onClosedAd() {
-        //waitTillAdWillClose = false;
-        //onFinished();
+
     }
 
     @Override
@@ -208,7 +201,8 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
     @Override
     public void onFinished() {
-        InterstitialAdCreator.get(this).removeListener();
+        mInterstitialAdCreator.removeListener();
+        if (firstRun) mAppInfo.wasFirstRun();
         mAppInfo.setGoInBackground(true);
         startActivity(getParentActivityIntent());
     }
