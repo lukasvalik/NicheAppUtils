@@ -1,5 +1,6 @@
 package eu.valics.library.Utils.permissionmanagement.Permission;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
@@ -21,9 +22,10 @@ public class NotificationAccessPermission extends SettingsPermission {
     @Override
     public boolean isEnabled(Context context) {
         try{
-            if(Settings.Secure.getString(context.getContentResolver(),
-                    "enabled_notification_listeners").contains(context.getApplicationContext().getPackageName()))
-            {
+            ContentResolver contentResolver = context.getContentResolver();
+            String packageName = context.getApplicationContext().getPackageName();
+            String s = Settings.Secure.getString(contentResolver, "enabled_notification_listeners");
+            if(s.contains(packageName)) {
                 return true;
             } else {
                 return false;

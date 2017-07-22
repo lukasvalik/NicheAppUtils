@@ -1,7 +1,9 @@
-package eu.valics.library.Base;
+package eu.valics.library.AppPausingProcesses;
 
 /**
- * Created by L on 7/19/2017.
+ * Created by L on 7/22/2017.
+ *
+ * NOT USING CONCEPT - FAILED
  */
 
 public interface AppPausingProcess {
@@ -11,8 +13,4 @@ public interface AppPausingProcess {
     boolean finish();
 
     boolean isDefault();
-
-    enum Type {
-        DEFAULT, PROCESS
-    }
 }

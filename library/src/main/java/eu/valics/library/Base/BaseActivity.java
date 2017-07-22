@@ -1,17 +1,20 @@
 package eu.valics.library.Base;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import eu.valics.library.Presenter.AdPresenter;
+import eu.valics.library.Utils.permissionmanagement.PermissionInvalidationListener;
 import eu.valics.library.Utils.permissionmanagement.PermissionManager;
 
 /**
  * Created by L on 7/19/2017.
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements PermissionInvalidationListener {
 
     protected AdPresenter mAdPresenter;
     protected PermissionManager mActivityPermissionManager;
@@ -36,9 +39,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!interstialAdHandled)
+        if (!interstialAdHandled) {
+            interstialAdHandled = true;
+            boolean isGonnaPause = mAdPresenter.isGoingToPauseActivity();
             mAdPresenter.onResume();
-        else {
+            if (!isGonnaPause) onInterstitialAdHandled();
+        } else {
             mAdPresenter.stopTimer();
             onInterstitialAdHandled();
         }
@@ -51,16 +57,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void onInterstitialAdHandled() {
-        interstialAdHandled = true;
-        /*
-        if (shouldCheckActivityPermissions()) {
-
+        mActivityPermissionManager.invalidatePermissions(false);
+        if (mActivityPermissionManager.getPermissionInProgress() == null) {
+            onActivityPermissionsHandled();
         }
-        */
-        onActivityPermissionsHandled();
     }
 
     protected void onActivityPermissionsHandled() {
+        mAdPresenter.setShowedInterstitialAd(false);
+        interstialAdHandled = false;
         onReadyResume();
     }
 
@@ -72,5 +77,24 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected PermissionManager getActivityPermissionManager() {
         return mActivityPermissionManager;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Now user should be able to use camera
+            mActivityPermissionManager.onPermissionGranted(requestCode);
+        } else {
+            // Your app will not have this permission. Turn off all functions
+            // that require this permission or it will force close like your
+            // original question
+            mActivityPermissionManager.onPermissionNotGranted(requestCode);
+        }
+    }
+
+    @Override
+    public void onPermissionInvalidated() {
+        //TODO here I could turn off activity probably
     }
 }

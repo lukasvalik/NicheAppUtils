@@ -14,7 +14,7 @@ import eu.valics.library.Utils.Ads.InterstitialAdCreator;
 public abstract class BaseApplication extends Application {
 
     private static BackgroundChecker sBackgroundChecker;
-    private InterstitialAdCreator mInterstitialAdCreator;
+    private static InterstitialAdCreator sInterstitialAdCreator;
 
     protected static BaseApplication sInstance;
     protected AppInfo mAppInfo;
@@ -29,7 +29,7 @@ public abstract class BaseApplication extends Application {
         mAppInfo = initAppInfo();
         mAppInfo.setAdFrequency(getAdFrequency());
 
-        mInterstitialAdCreator = new InterstitialAdCreator(getApplicationContext());
+        sInterstitialAdCreator = new InterstitialAdCreator(getApplicationContext());
 
         NicheAppUtils.initAds(getInterstitialAdId(), getBannerAdId());
     }
@@ -54,8 +54,8 @@ public abstract class BaseApplication extends Application {
         return mAppInfo;
     }
 
-    public InterstitialAdCreator getInterstitialAdCreator() {
-        return mInterstitialAdCreator;
+    public static InterstitialAdCreator getInterstitialAdCreator() {
+        return sInterstitialAdCreator;
     }
 
     public static BackgroundChecker getBackgroundChecker() {

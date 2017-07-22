@@ -27,6 +27,6 @@ public class MyApp extends BaseApplication {
 
     @Override
     protected int getAdFrequency() {
-        return 2;
+        return 1;
     }
 }

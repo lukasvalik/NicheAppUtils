@@ -59,7 +59,7 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
         BaseApplication application = BaseApplication.getInstance();
         mAdFrequency = application.getAppInfo().getAdFrequency();
-        mInterstitialAdCreator = application.getInterstitialAdCreator();
+        mInterstitialAdCreator = BaseApplication.getInterstitialAdCreator();
     }
 
     @Override

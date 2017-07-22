@@ -26,7 +26,7 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         mContext = application.getApplicationContext();
         mAppInfo = application.getAppInfo();
         mAdFrequency = mAppInfo.getAdFrequency();
-        mInterstitialAdCreator = application.getInterstitialAdCreator();
+        mInterstitialAdCreator = BaseApplication.getInterstitialAdCreator();
     }
 
     public void onResume() {
@@ -37,6 +37,15 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
     public void onPause() {
         startTimer();
         if (!showingInterstitialAd) mInterstitialAdCreator.removeListener();
+    }
+
+    public boolean isGoingToPauseActivity() {
+        boolean wasInBg = mAppInfo.wasInBackground();
+        boolean showingAd = showingInterstitialAd;
+        boolean bufferOverflow = mAppInfo.getBufferForInterstitialAd() + 1 > mAdFrequency;
+        boolean adLoaded = mInterstitialAdCreator.getInterstitialAd().isLoaded();
+        boolean splashLoadedDone = mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone();
+        return wasInBg && ! showingAd && bufferOverflow && (adLoaded || splashLoadedDone);
     }
 
     protected void handleBackgroundStateAndInterstitialAd() {

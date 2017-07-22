@@ -2,8 +2,6 @@ package eu.valics.library.AppPausingProcesses;
 
 import java.util.ArrayList;
 
-import eu.valics.library.Base.AppPausingProcess;
-
 /**
  * Created by L on 7/19/2017.
  */

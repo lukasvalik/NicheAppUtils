@@ -3,7 +3,14 @@ package eu.valics.nicheapputils.ui;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 
+import eu.valics.library.Base.AppInfo;
 import eu.valics.library.Base.BaseActivity;
+import eu.valics.library.Base.BaseApplication;
+import eu.valics.library.Utils.permissionmanagement.Permission.CameraPermission;
+import eu.valics.library.Utils.permissionmanagement.Permission.NotificationAccessPermission;
+import eu.valics.library.Utils.permissionmanagement.Permission.ReadPhoneStatePermission;
+import eu.valics.library.Utils.permissionmanagement.PermissionGroup;
+import eu.valics.library.Utils.permissionmanagement.PermissionManager;
 import eu.valics.nicheapputils.R;
 
 public class MainActivity extends BaseActivity {
@@ -18,7 +25,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         mRootView = (RelativeLayout) findViewById(R.id.rootView);
-        mAdPresenter.setAdFrequency(2);
     }
 
     @Override
@@ -32,29 +38,28 @@ public class MainActivity extends BaseActivity {
         mAdPresenter.hideBanner();
     }
 
-    /*
-        @Override
-        protected PermissionManager getActivityPermissionManager() {
+    @Override
+    protected PermissionManager initActivityPermissionManager() {
+        AppInfo appInfo = BaseApplication.getInstance().getAppInfo();
 
-            CameraPermission cameraPermission = new CameraPermission(AppInfo.get(this));
-            cameraPermission.setFatal(true, getString(R.string.camera_permission), getString(R.string.camera_permission_permission_description));
-            ReadPhoneStatePermission readPhoneStatePermission = new ReadPhoneStatePermission(AppInfo.get(this));
-            NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(AppInfo.get(this));
-            PermissionGroup permissionGroup =
-                    new PermissionGroup.Builder()
-                            .title(INCOMING_EVENTS_GROUP_TITLE)
-                            .addPermission(readPhoneStatePermission)
-                            .addPermission(notificationAccessPermission)
-                            .build();
-            permissionGroup.setFatal(true, getString(R.string.permission_group_title), getString(R.string.permission_group_description));
+        CameraPermission cameraPermission = new CameraPermission(appInfo);
+        cameraPermission.setFatal(true, getString(R.string.camera_permission), getString(R.string.camera_permission_permission_description));
+        ReadPhoneStatePermission readPhoneStatePermission = new ReadPhoneStatePermission(appInfo);
+        NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(appInfo);
+        PermissionGroup permissionGroup =
+                new PermissionGroup.Builder()
+                        .title(INCOMING_EVENTS_GROUP_TITLE)
+                        .addPermission(readPhoneStatePermission)
+                        .addPermission(notificationAccessPermission)
+                        .build();
+        permissionGroup.setFatal(true, getString(R.string.permission_group_title), getString(R.string.permission_group_description));
 
-            return new PermissionManager.Builder()
-                    .with(this, AppInfo.get(this))
-                    .addPermission(cameraPermission)
-                    .addPermissionGroup(permissionGroup)
-                    .build();
-        }
-    */
+        return new PermissionManager.Builder()
+                .with(this, appInfo)
+                .addPermission(cameraPermission)
+                .addPermissionGroup(permissionGroup)
+                .build();
+    }
 
 
 }

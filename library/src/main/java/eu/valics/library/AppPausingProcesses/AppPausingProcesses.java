@@ -2,7 +2,6 @@ package eu.valics.library.AppPausingProcesses;
 
 import java.util.ArrayList;
 
-import eu.valics.library.Base.AppPausingProcess;
 import io.reactivex.Observable;
 
 /**
