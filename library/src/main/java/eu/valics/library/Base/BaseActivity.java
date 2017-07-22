@@ -39,6 +39,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     @Override
     protected void onResume() {
         super.onResume();
+        mActivityPermissionManager.setListener(this);
+        invalidateAppPausingProcesses();
+    }
+
+    public void invalidateAppPausingProcesses() {
         if (!interstialAdHandled) {
             interstialAdHandled = true;
             boolean isGonnaPause = mAdPresenter.isGoingToPauseActivity();
@@ -54,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     protected void onPause() {
         super.onPause();
         mAdPresenter.onPause();
+        mActivityPermissionManager.setListener(null);
     }
 
     protected void onInterstitialAdHandled() {
@@ -83,12 +89,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Now user should be able to use camera
+            // Now user should be able to use feature
             mActivityPermissionManager.onPermissionGranted(requestCode);
         } else {
             // Your app will not have this permission. Turn off all functions
-            // that require this permission or it will force close like your
-            // original question
+            // that require this permission or it will force close
             mActivityPermissionManager.onPermissionNotGranted(requestCode);
         }
     }
@@ -96,5 +101,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     @Override
     public void onPermissionInvalidated() {
         //TODO here I could turn off activity probably
+        interstialAdHandled = false;
     }
 }

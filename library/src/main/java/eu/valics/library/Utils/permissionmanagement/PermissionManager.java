@@ -2,7 +2,6 @@ package eu.valics.library.Utils.permissionmanagement;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -10,7 +9,9 @@ import android.support.v7.app.AlertDialog;
 import java.util.ArrayList;
 
 import eu.valics.library.Base.AppInfo;
+import eu.valics.library.Base.BaseActivity;
 import eu.valics.library.R;
+import io.reactivex.Observable;
 
 /**
  * Created by L on 7/7/2017.
@@ -22,12 +23,12 @@ public class PermissionManager implements PermissionManagement {
 
     private ArrayList<BasePermission> mPermissions;
     private ArrayList<PermissionGroup> mPermissionGroups;
-    private Activity mActivity;
+    private BaseActivity mActivity;
     private AppInfo mAppInfo;
     //private boolean mAskingFatalPermissionInProgress = false;
     private BasePermission mPermissionInProgress;
 
-    private PermissionManager(Activity activity,
+    private PermissionManager(BaseActivity activity,
                               AppInfo appInfo,
                               ArrayList<BasePermission> permissions,
                               ArrayList<PermissionGroup> permissionGroups) {
@@ -248,7 +249,7 @@ public class PermissionManager implements PermissionManagement {
     public void onPermissionDenied(int requestCode) {
         BasePermission permission = getPermissionByRequestCode(requestCode);
         PermissionGroup permissionGroup = getPermissionGroup(permission);
-        if (permissionGroup != null && permissionGroup.isFatal() && permissionGroup.allOtherPermissionsDenied(permission)) {
+        if (permissionGroup != null && permissionGroup.isFatal() && permissionGroup.allOtherPermissionsDenied(permission) && !permissionGroup.enabledAtLeastOnePermission(mActivity)) {
             showFatalDialog(permission, permissionGroup);
         } else if (permission.isFatal()) {
             showFatalDialog(permission, permissionGroup);
@@ -257,35 +258,46 @@ public class PermissionManager implements PermissionManagement {
             if (permissionGroup != null && permissionGroup.allOtherPermissionsDenied(permission)) {
                 permissionGroup.setDenied(true);
             }
+            mPermissionInProgress = null;
+            mActivity.invalidateAppPausingProcesses();
         }
     }
+/*
+    public boolean isEnabledPermission(Context context, int requestCode) {
 
-    public boolean isEnabledPermission(int requestCode) {
         for (BasePermission permission : mPermissions) {
             if (permission.getRequestCode() == requestCode)
-                return true;
+                return permission.isEnabled(context);
         }
         for (PermissionGroup permissionGroup : mPermissionGroups) {
             for (BasePermission basePermission : permissionGroup.getPermissions()) {
                 if (basePermission.getRequestCode() == requestCode)
-                    return true;
+                    return basePermission.isEnabled(context);
             }
         }
         return false;
     }
+*/
+    public boolean isEnabledPermissionRx(Context context, int requestCode) {
+        return isPermissionEnabledFromList(context, mPermissions, requestCode) ||
+                Observable.fromIterable(mPermissionGroups)
+                        .filter(group -> isPermissionEnabledFromList(context, group.getPermissions(), requestCode))
+                        .count()
+                        .blockingGet() > 0;
+    }
+
+    public boolean isPermissionEnabledFromList(Context context, ArrayList<BasePermission> permissions, int requestCode) {
+        return Observable.fromIterable(permissions).filter(p->p.getRequestCode() == requestCode && p.isEnabled(context)).count().blockingGet() > 0;
+    }
 
     public boolean isEnabledGroup(Context context, String title) {
-        for (PermissionGroup permissionGroup : mPermissionGroups) {
-            if (permissionGroup.getTitle().equals(title) && permissionGroup.isEnabled(context))
-                return true;
-        }
-        return false;
+        return Observable.fromIterable(mPermissionGroups).filter(g-> g.getTitle().equals(title) && g.isEnabled(context)).count().blockingGet() > 0;
     }
 
     public static class Builder {
         private ArrayList<BasePermission> permissions;
         private ArrayList<PermissionGroup> permissionGroups;
-        private Activity activity;
+        private BaseActivity activity;
         private AppInfo appInfo;
 
         public Builder() {
@@ -293,7 +305,7 @@ public class PermissionManager implements PermissionManagement {
             permissionGroups = new ArrayList<>();
         }
 
-        public Builder with(Activity activity, AppInfo appInfo) {
+        public Builder with(BaseActivity activity, AppInfo appInfo) {
             this.activity = activity;
             this.appInfo = appInfo;
             return this;
@@ -323,24 +335,19 @@ public class PermissionManager implements PermissionManagement {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(title);
         builder.setMessage(message);
-        builder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //mAskingFatalPermissionInProgress = false;
-                mPermissionInProgress = null;
-                if (permissionGroup != null) permissionGroup.resetAllDeniedStatuses();
-                invalidatePermissions(false);
-            }
+        builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
+            //mAskingFatalPermissionInProgress = false;
+            mPermissionInProgress = null;
+            if (permissionGroup != null) permissionGroup.resetAllDeniedStatuses();
+            invalidatePermissions(false);
         });
-        builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //mAskingFatalPermissionInProgress = false;
-                mPermissionInProgress = null;
-                permission.setDenied(true);
-                if (permissionGroup != null) permissionGroup.setDenied(true);
-                //invalidatePermissions(false); // no need to ask anymore permissions
-            }
+        builder.setNegativeButton(R.string.dialog_cancel, (dialog, which) -> {
+            //mAskingFatalPermissionInProgress = false;
+            mPermissionInProgress = null;
+            permission.setDenied(true);
+            if (permissionGroup != null) permissionGroup.setDenied(true);
+            if (mListener != null) mListener.onPermissionInvalidated();
+            //invalidatePermissions(false); // no need to ask anymore permissions
         });
         builder.show();
     }
@@ -350,20 +357,12 @@ public class PermissionManager implements PermissionManagement {
         String message = "Open Settings, then tap Permissions and turn on " + permissionTitle;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
-        builder.setPositiveButton("Open Settings", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //mAskingFatalPermissionInProgress = false;
-                mPermissionInProgress = null;
-                activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName())));
-            }
+        builder.setPositiveButton("Open Settings", (dialog, which) -> {
+            mPermissionInProgress = null;
+            activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName())));
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mPermissionInProgress = null;
-                //mAskingFatalPermissionInProgress = false;
-            }
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            mPermissionInProgress = null;
         });
         builder.show();
     }

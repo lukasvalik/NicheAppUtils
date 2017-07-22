@@ -42,7 +42,8 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
     public boolean isGoingToPauseActivity() {
         boolean wasInBg = mAppInfo.wasInBackground();
         boolean showingAd = showingInterstitialAd;
-        boolean bufferOverflow = mAppInfo.getBufferForInterstitialAd() + 1 > mAdFrequency;
+        int buffer = mAppInfo.getBufferForInterstitialAd();
+        boolean bufferOverflow = buffer + 1 >= mAdFrequency;
         boolean adLoaded = mInterstitialAdCreator.getInterstitialAd().isLoaded();
         boolean splashLoadedDone = mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone();
         return wasInBg && ! showingAd && bufferOverflow && (adLoaded || splashLoadedDone);
@@ -61,8 +62,8 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
                     showingInterstitialAd = true;
                     mInterstitialAdCreator.showInterstatialAd();
                 } else if (mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone()) {
-                    int decreaseAdBuffer = mAppInfo.getBufferForInterstitialAd() - 1;
-                    mAppInfo.setBufferForInterstitialAd(decreaseAdBuffer);
+                    //int decreaseAdBuffer = mAppInfo.getBufferForInterstitialAd() - 1;
+                    //mAppInfo.setBufferForInterstitialAd(decreaseAdBuffer);
                     SplashActivityLauncher.launch(mContext); // launcher activity should be splash
                 }
             }
@@ -109,7 +110,7 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
 
     @Override
     public void onShowedAd() {
-        mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - mAdFrequency - InterstitialAdCreator.BULGARIAN_CONSTANT);
+        mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - mAdFrequency);
     }
 
     @Override

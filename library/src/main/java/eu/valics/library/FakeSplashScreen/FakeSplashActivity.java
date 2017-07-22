@@ -173,13 +173,12 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
 
     @Override
     public void onLoadedAd() {
-        mInterstitialAdCreator.showInterstatialAd();
+        onFinished();
     }
 
     @Override
     public void onShowedAd() {
-        if (!firstRun) mAppInfo.setBufferForInterstitialAd(mAppInfo.getBufferForInterstitialAd() - mAdFrequency - InterstitialAdCreator.BULGARIAN_CONSTANT);
-        onFinished();
+
     }
 
     @Override
@@ -202,8 +201,12 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     @Override
     public void onFinished() {
         mInterstitialAdCreator.removeListener();
-        if (firstRun) mAppInfo.wasFirstRun();
+        if (firstRun && handleFirstRun()) mAppInfo.wasFirstRun();
         mAppInfo.setGoInBackground(true);
         startActivity(getParentActivityIntent());
+    }
+
+    protected boolean handleFirstRun() {
+        return true;
     }
 }

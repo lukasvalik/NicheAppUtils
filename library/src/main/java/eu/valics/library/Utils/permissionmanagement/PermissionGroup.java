@@ -5,6 +5,8 @@ import android.content.Context;
 
 import java.util.ArrayList;
 
+import io.reactivex.Observable;
+
 /**
  * Created by L on 7/7/2017.
  */
@@ -50,11 +52,8 @@ public class PermissionGroup {
         return enabledAtLeastOnePermission(context);
     }
 
-    private boolean enabledAtLeastOnePermission(Context context) {
-        for (BasePermission permission : mPermissions) {
-            if (permission.isEnabled(context)) return true;
-        }
-        return false;
+    public boolean enabledAtLeastOnePermission(Context context) {
+        return Observable.fromIterable(mPermissions).filter(p -> p.isEnabled(context)).count().blockingGet() > 0;
     }
 
     public boolean isDenied() {
@@ -66,18 +65,12 @@ public class PermissionGroup {
     }
 
     public boolean allOtherPermissionsDenied(BasePermission permission) {
-        for (BasePermission basePermission : mPermissions) {
-            if (basePermission.getRequestCode() != permission.getRequestCode() && !basePermission.isDenied())
-                return false;
-        }
-        return true;
+        return Observable.fromIterable(mPermissions).filter(p -> p.getRequestCode() != permission.getRequestCode() && !p.isDenied()).count().blockingGet() == 0;
     }
 
     public void resetAllDeniedStatuses() {
         mDenied = false;
-        for (BasePermission permission : mPermissions) {
-            permission.setDenied(false);
-        }
+        Observable.fromIterable(mPermissions).doOnNext(p -> p.setDenied(false));
     }
 
     public String getTitle() {
@@ -85,11 +78,7 @@ public class PermissionGroup {
     }
 
     public boolean isAnyPermissionAvailableToAskAgain(Activity activity) {
-        for (BasePermission basePermission : mPermissions) {
-            if (!basePermission.shouldNeverAskAgain(activity))
-                return true;
-        }
-        return false;
+        return Observable.fromIterable(mPermissions).filter(p -> !p.shouldNeverAskAgain(activity)).count().blockingGet() > 0;
     }
 
     public static class Builder {
@@ -113,6 +102,7 @@ public class PermissionGroup {
         }
 
         public PermissionGroup build() {
+            if (permissions == null) throw new IllegalArgumentException("Permission list cannot be null");
             return new PermissionGroup(title, permissions, fatal);
         }
     }
