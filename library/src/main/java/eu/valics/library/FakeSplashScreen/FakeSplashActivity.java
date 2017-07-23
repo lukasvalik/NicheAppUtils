@@ -26,16 +26,9 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     private View mContentView;
     private FakeLoading mFakeLoading;
     private RelativeLayout mRootView;
-    private ImageView mBackgroundImage;
     private ImageView mLogoImage;
     private ProgressWheel mProgressWheel;
     private TextView mLoadingTextView;
-
-    protected int mBackgroundColor;
-    protected Drawable mBackgroundDrawable;
-    protected Drawable mLogoDrawable;
-    protected int mProgressWheelColor;
-    protected int mLoadingTextColor;
 
     private int mAdFrequency;
     private InterstitialAdCreator mInterstitialAdCreator;
@@ -60,32 +53,27 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
         BaseApplication application = BaseApplication.getInstance();
         mAdFrequency = application.getAppInfo().getAdFrequency();
         mInterstitialAdCreator = BaseApplication.getInterstitialAdCreator();
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         initViews();
         mBackgroundType = getBackgroundType();
 
         switch (mBackgroundType) {
             case COLOR:
-                setBackgroundColor(mBackgroundColor);
+                mRootView.setBackgroundColor(getBackgroundColor());
                 break;
             case DRAWABLE:
-                setBackgroundDrawable(mBackgroundDrawable);
+                mRootView.setBackground(getBackgroundDrawable());
                 break;
             default:
                 throw new IllegalStateException("Incorrect BackgroundState");
         }
-        setLogo(mLogoDrawable);
-        setProgressColor(mProgressWheelColor);
-        setLoadingTextColor(mLoadingTextColor);
+        mLogoImage.setImageDrawable(getLogoDrawable());
+        mProgressWheel.setBarColor(getProgressColor());
+        mLoadingTextView.setTextColor(getLoadingTextColor());
     }
 
     private void initViews() {
         mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
-        mBackgroundImage = (ImageView) mContentView.findViewById(R.id.backgroundImage);
         mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
         mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
         mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
@@ -137,25 +125,11 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
      * UI Properties
      */
 
-    protected void setBackgroundColor(int color) {
-        mRootView.setBackgroundColor(color);
-    }
-
-    protected void setBackgroundDrawable(Drawable drawable) {
-        mBackgroundImage.setImageDrawable(drawable);
-    }
-
-    protected void setLogo(Drawable logoDrawable) {
-        mLogoImage.setImageDrawable(logoDrawable);
-    }
-
-    protected void setProgressColor(int color) {
-        mProgressWheel.setBarColor(color);
-    }
-
-    protected void setLoadingTextColor(int color) {
-        mLoadingTextView.setTextColor(color);
-    }
+    protected abstract int getBackgroundColor();
+    protected abstract Drawable getBackgroundDrawable();
+    protected abstract Drawable getLogoDrawable();
+    protected abstract int getProgressColor();
+    protected abstract int getLoadingTextColor();
 
     protected void setFullscreen() {
         setTheme(R.style.NoActionBarFullscreenActivity);
@@ -205,6 +179,11 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
         mAppInfo.setGoInBackground(true);
         startActivity(getParentActivityIntent());
     }
+
+    /**
+     * We may want to be able determine first run in next activity e.g. show tutorial
+     * @return whether we handle first run in splash activity
+     */
 
     protected boolean handleFirstRun() {
         return true;

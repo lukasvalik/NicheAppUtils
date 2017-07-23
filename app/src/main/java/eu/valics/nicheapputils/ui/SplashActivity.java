@@ -1,6 +1,6 @@
 package eu.valics.nicheapputils.ui;
 
-import android.os.Bundle;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
 import eu.valics.library.FakeSplashScreen.FakeSplashActivity;
@@ -12,12 +12,28 @@ import eu.valics.nicheapputils.R;
 public class SplashActivity extends FakeSplashActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getBackgroundColor() {
+        return 0;
+    }
 
-        mBackgroundDrawable = ContextCompat.getDrawable(this, R.drawable.loading_screen);
-        mProgressWheelColor = ContextCompat.getColor(this, R.color.colorPrimary);
-        mLoadingTextColor = ContextCompat.getColor(this, R.color.colorPrimary);
+    @Override
+    protected Drawable getBackgroundDrawable() {
+        return ContextCompat.getDrawable(this, R.drawable.loading_screen);
+    }
+
+    @Override
+    protected Drawable getLogoDrawable() {
+        return null;
+    }
+
+    @Override
+    protected int getProgressColor() {
+        return ContextCompat.getColor(this, R.color.colorPrimary);
+    }
+
+    @Override
+    protected int getLoadingTextColor() {
+        return ContextCompat.getColor(this, R.color.colorPrimary);
     }
 
     @Override
