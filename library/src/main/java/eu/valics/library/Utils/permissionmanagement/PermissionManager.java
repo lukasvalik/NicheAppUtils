@@ -1,7 +1,6 @@
 package eu.valics.library.Utils.permissionmanagement;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +24,6 @@ public class PermissionManager implements PermissionManagement {
     private ArrayList<PermissionGroup> mPermissionGroups;
     private BaseActivity mActivity;
     private AppInfo mAppInfo;
-    //private boolean mAskingFatalPermissionInProgress = false;
     private BasePermission mPermissionInProgress;
 
     private PermissionManager(BaseActivity activity,
@@ -45,6 +43,8 @@ public class PermissionManager implements PermissionManagement {
      */
 
     private void subscribePermissionManagerToSettingsPermissions() {
+        //Observable.fromIterable(mPermissions).filter(p->p instanceof SettingsPermission).doOnNext(p -> ((SettingsPermission)p).setPermissionManager(this));
+
         for (BasePermission permission : mPermissions) {
             if (permission instanceof SettingsPermission)
                 ((SettingsPermission) permission).setPermissionManager(this);
@@ -171,25 +171,16 @@ public class PermissionManager implements PermissionManagement {
     }
 
     /**
-     * @return whether user enabled at least one permission. At least one functionality will work, he can turn on this feature
+     * @return check whether all fatal permissions are granted
      */
 
-    public boolean enabledAtLeastOne() {
-        for (BasePermission permission : mPermissions) {
-            if (permission.isEnabled(mActivity)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return check whether all permissions are granted
-     */
-
-    public boolean enabledAllPermissions() {
-        for (BasePermission permission : mPermissions) {
-            if (!permission.isEnabled(mActivity)) return false;
-        }
-        return true;
+    public boolean enabledAllFatalPermissions() {
+        return Observable.fromIterable(mPermissions).filter(p->p.isFatal() && !p.isEnabled(mActivity)).count().blockingGet() == 0 &&
+                Observable
+                        .fromIterable(mPermissionGroups)
+                        .filter(group-> group.isFatal() && group.getPermissions().size() > 0 && Observable.fromIterable(group.getPermissions()).filter(p -> p.isEnabled(mActivity)).count().blockingGet() == 0)
+                        .count()
+                        .blockingGet() == 0;
     }
 
     private BasePermission getPermissionByRequestCode(int requestCode) {
@@ -262,36 +253,21 @@ public class PermissionManager implements PermissionManagement {
             mActivity.invalidateAppPausingProcesses();
         }
     }
-/*
-    public boolean isEnabledPermission(Context context, int requestCode) {
 
-        for (BasePermission permission : mPermissions) {
-            if (permission.getRequestCode() == requestCode)
-                return permission.isEnabled(context);
-        }
-        for (PermissionGroup permissionGroup : mPermissionGroups) {
-            for (BasePermission basePermission : permissionGroup.getPermissions()) {
-                if (basePermission.getRequestCode() == requestCode)
-                    return basePermission.isEnabled(context);
-            }
-        }
-        return false;
-    }
-*/
-    public boolean isEnabledPermissionRx(Context context, int requestCode) {
-        return isPermissionEnabledFromList(context, mPermissions, requestCode) ||
+    public boolean isEnabledPermission(int requestCode) {
+        return isPermissionEnabledFromList(mPermissions, requestCode) ||
                 Observable.fromIterable(mPermissionGroups)
-                        .filter(group -> isPermissionEnabledFromList(context, group.getPermissions(), requestCode))
+                        .filter(group -> isPermissionEnabledFromList(group.getPermissions(), requestCode))
                         .count()
                         .blockingGet() > 0;
     }
 
-    public boolean isPermissionEnabledFromList(Context context, ArrayList<BasePermission> permissions, int requestCode) {
-        return Observable.fromIterable(permissions).filter(p->p.getRequestCode() == requestCode && p.isEnabled(context)).count().blockingGet() > 0;
+    public boolean isPermissionEnabledFromList(ArrayList<BasePermission> permissions, int requestCode) {
+        return Observable.fromIterable(permissions).filter(p->p.getRequestCode() == requestCode && p.isEnabled(mActivity)).count().blockingGet() > 0;
     }
 
-    public boolean isEnabledGroup(Context context, String title) {
-        return Observable.fromIterable(mPermissionGroups).filter(g-> g.getTitle().equals(title) && g.isEnabled(context)).count().blockingGet() > 0;
+    public boolean isEnabledGroup(String title) {
+        return Observable.fromIterable(mPermissionGroups).filter(g-> g.getTitle().equals(title) && g.isEnabled(mActivity)).count().blockingGet() > 0;
     }
 
     public static class Builder {
