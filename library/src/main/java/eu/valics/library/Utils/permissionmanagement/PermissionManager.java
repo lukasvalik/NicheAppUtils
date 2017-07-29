@@ -134,7 +134,7 @@ public class PermissionManager implements PermissionManagement {
         if (mListener != null) mListener.onPermissionInvalidated();
     }
 
-    private PermissionGroup getPermissionGroupByTitle(String permissionGroupTitle) {
+    private PermissionGroup findPermissionGroup(String permissionGroupTitle) {
         for (PermissionGroup permissionGroup : mPermissionGroups) {
             if (permissionGroup.getTitle().equals(permissionGroupTitle))
                 return permissionGroup;
@@ -173,7 +173,7 @@ public class PermissionManager implements PermissionManagement {
                         .blockingGet() == 0;
     }
 
-    private BasePermission getPermissionByRequestCode(int requestCode) {
+    private BasePermission findPermission(int requestCode) {
         for (BasePermission permission : mPermissions) {
             if (permission.getRequestCode() == requestCode) return permission;
         }
@@ -183,6 +183,16 @@ public class PermissionManager implements PermissionManagement {
             }
         }
         throw new IllegalArgumentException("Not Correct RequestCode");
+    }
+
+    private PermissionGroup findPermissionGroup(BasePermission permission) {
+        for (PermissionGroup permissionGroup : mPermissionGroups) {
+            for (BasePermission basePermission : permissionGroup.getPermissions()) {
+                if (basePermission.getRequestCode() == permission.getRequestCode())
+                    return permissionGroup;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -196,8 +206,8 @@ public class PermissionManager implements PermissionManagement {
     public void onPermissionNotGranted(final int requestCode) {
         //mAskingFatalPermissionInProgress = false;
         mPermissionInProgress = null;
-        BasePermission permission = getPermissionByRequestCode(requestCode);
-        PermissionGroup permissionGroup = getPermissionGroup(permission);
+        BasePermission permission = findPermission(requestCode);
+        PermissionGroup permissionGroup = findPermissionGroup(permission);
         if (permissionGroup != null && permissionGroup.isFatal() && permissionGroup.allOtherPermissionsDenied(permission)) {
             showFatalDialog(permission, permissionGroup);
         } else if (permission.isFatal()) {
@@ -211,16 +221,6 @@ public class PermissionManager implements PermissionManagement {
         }
     }
 
-    private PermissionGroup getPermissionGroup(BasePermission permission) {
-        for (PermissionGroup permissionGroup : mPermissionGroups) {
-            for (BasePermission basePermission : permissionGroup.getPermissions()) {
-                if (basePermission.getRequestCode() == permission.getRequestCode())
-                    return permissionGroup;
-            }
-        }
-        return null;
-    }
-
     @Override
     public void onPermissionAccepted(int requestCode) {
 
@@ -228,8 +228,8 @@ public class PermissionManager implements PermissionManagement {
 
     @Override
     public void onPermissionDenied(int requestCode) {
-        BasePermission permission = getPermissionByRequestCode(requestCode);
-        PermissionGroup permissionGroup = getPermissionGroup(permission);
+        BasePermission permission = findPermission(requestCode);
+        PermissionGroup permissionGroup = findPermissionGroup(permission);
         if (permissionGroup != null && permissionGroup.isFatal() && permissionGroup.allOtherPermissionsDenied(permission) && !permissionGroup.enabledAtLeastOnePermission(mActivity)) {
             showFatalDialog(permission, permissionGroup);
         } else if (permission.isFatal()) {
@@ -328,6 +328,7 @@ public class PermissionManager implements PermissionManagement {
             activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName())));
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> {
+            onPermissionNotGranted(mPermissionInProgress.getRequestCode());
             mPermissionInProgress = null;
         });
         builder.show();
