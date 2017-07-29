@@ -111,6 +111,8 @@ public abstract class BasePermission {
         public static final int READ_EXTERNAL_STORAGE = 32;
         public static final int WRITE_EXTERNAL_STORAGE = 33;
 
+        public static final int RECORD_AUDIO = 34;
+
         /**
          * Settings Permissions
          */
