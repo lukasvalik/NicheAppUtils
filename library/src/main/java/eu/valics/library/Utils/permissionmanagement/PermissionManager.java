@@ -92,7 +92,7 @@ public class PermissionManager implements PermissionManagement {
                             mAppInfo.setAskedPermission(permission.getRequestCode());
                             mPermissionInProgress = permission;
                             return;
-                        } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
+                        } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
                             showSettingsDialog(mActivity, permission.getTitle());
                             mPermissionInProgress = permission;
                             return;
@@ -129,7 +129,7 @@ public class PermissionManager implements PermissionManagement {
                                 //mAskingFatalPermissionInProgress = true;
                                 mPermissionInProgress = permission;
                                 return;
-                            } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
+                            } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
                                 showSettingsDialog(mActivity, permission.getTitle());
                                 mPermissionInProgress = permission;
                                 return;
