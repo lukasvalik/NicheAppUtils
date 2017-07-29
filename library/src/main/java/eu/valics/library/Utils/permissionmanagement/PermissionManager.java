@@ -207,8 +207,8 @@ public class PermissionManager implements PermissionManagement {
             if (permissionGroup != null && permissionGroup.allOtherPermissionsDenied(permission)) {
                 permissionGroup.setDenied(true);
             }
+            mActivity.invalidateAppPausingProcesses();
         }
-
     }
 
     private PermissionGroup getPermissionGroup(BasePermission permission) {
