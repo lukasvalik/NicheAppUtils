@@ -29,9 +29,9 @@ public abstract class BaseApplication extends Application {
         mAppInfo = initAppInfo();
         mAppInfo.setAdFrequency(getAdFrequency());
 
-        sInterstitialAdCreator = new InterstitialAdCreator(getApplicationContext());
-
         NicheAppUtils.initAds(getInterstitialAdId(), getBannerAdId());
+
+        sInterstitialAdCreator = new InterstitialAdCreator(getApplicationContext());
     }
 
     protected String getBannerAdId(){
