@@ -65,7 +65,7 @@ public class PermissionManager implements PermissionManagement {
                     mPermissionInProgress = permission;
                     return;
                 } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
-                    showSettingsDialog(mActivity, permission.getTitle());
+                    showSettingsDialog(mActivity, permission);
                     mPermissionInProgress = permission;
                     return;
                 } else {
@@ -83,7 +83,7 @@ public class PermissionManager implements PermissionManagement {
                             mPermissionInProgress = permission;
                             return;
                         } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
-                            showSettingsDialog(mActivity, permission.getTitle());
+                            showSettingsDialog(mActivity, permission);
                             mPermissionInProgress = permission;
                             return;
                         } else {
@@ -100,7 +100,7 @@ public class PermissionManager implements PermissionManagement {
                     mPermissionInProgress = permission;
                     return;
                 } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
-                    showSettingsDialog(mActivity, permission.getTitle());
+                    showSettingsDialog(mActivity, permission);
                     mPermissionInProgress = permission;
                     return;
                 } else {
@@ -120,7 +120,7 @@ public class PermissionManager implements PermissionManagement {
                                 mPermissionInProgress = permission;
                                 return;
                             } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
-                                showSettingsDialog(mActivity, permission.getTitle());
+                                showSettingsDialog(mActivity, permission);
                                 mPermissionInProgress = permission;
                                 return;
                             } else {
@@ -318,9 +318,9 @@ public class PermissionManager implements PermissionManagement {
         builder.show();
     }
 
-    private void showSettingsDialog(final Activity activity, String permissionTitle) {
+    private void showSettingsDialog(final Activity activity, BasePermission permission) {
         //mAskingFatalPermissionInProgress = true;
-        String message = "Open Settings, then tap Permissions and turn on " + permissionTitle;
+        String message = "Open Settings, then tap Permissions and turn on " + permission.getTitle();
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
         builder.setPositiveButton("Open Settings", (dialog, which) -> {
@@ -328,7 +328,7 @@ public class PermissionManager implements PermissionManagement {
             activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName())));
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> {
-            onPermissionNotGranted(mPermissionInProgress.getRequestCode());
+            onPermissionNotGranted(permission.getRequestCode());
             mPermissionInProgress = null;
         });
         builder.show();
