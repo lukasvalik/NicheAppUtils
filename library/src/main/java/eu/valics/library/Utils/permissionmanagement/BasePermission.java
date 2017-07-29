@@ -17,12 +17,18 @@ public abstract class BasePermission {
     protected String mFatalDialogTitle = "";
     protected String mFatalDialogMessage = "";
     protected AppInfo mAppInfo;
+    protected PermissionManager mPermissionManager; // we need to have reference in case user is disabling fatal permissions
 
     public BasePermission(AppInfo appInfo) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             mAppInfo = appInfo; // never asked again marked
         } else
             mDenied = false;
+    }
+
+    // this is not passed in constructor, but it is set in permissionManager
+    public void setPermissionManager(PermissionManager permissionManager) {
+        mPermissionManager = permissionManager;
     }
 
     abstract void askForPermission(Activity activity); //return granted?

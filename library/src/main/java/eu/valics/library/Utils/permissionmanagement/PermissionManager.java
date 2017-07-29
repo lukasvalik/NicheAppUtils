@@ -35,26 +35,16 @@ public class PermissionManager implements PermissionManagement {
         mActivity = activity;
         mAppInfo = appInfo;
 
-        subscribePermissionManagerToSettingsPermissions();
+        subscribePermissionManagerToPermissions();
     }
 
     /**
      * We put reference inside all SettingsPermissions because they do not trigger callback in activity
      */
 
-    private void subscribePermissionManagerToSettingsPermissions() {
-        //Observable.fromIterable(mPermissions).filter(p->p instanceof SettingsPermission).doOnNext(p -> ((SettingsPermission)p).setPermissionManager(this));
-
-        for (BasePermission permission : mPermissions) {
-            if (permission instanceof SettingsPermission)
-                ((SettingsPermission) permission).setPermissionManager(this);
-        }
-        for (PermissionGroup group : mPermissionGroups) {
-            for (BasePermission permission : group.getPermissions()) {
-                if (permission instanceof SettingsPermission)
-                    ((SettingsPermission) permission).setPermissionManager(this);
-            }
-        }
+    private void subscribePermissionManagerToPermissions() {
+        Observable.fromIterable(mPermissions).doOnNext(p -> p.setPermissionManager(this));
+        Observable.fromIterable(mPermissionGroups).doOnNext(g -> Observable.fromIterable(g.getPermissions()).doOnNext(p -> p.setPermissionManager(this)));
     }
 
     /**
@@ -357,5 +347,9 @@ public class PermissionManager implements PermissionManagement {
 
     public void setPermissionInProgress(BasePermission permissionInProgress) {
         mPermissionInProgress = permissionInProgress;
+    }
+
+    public AppInfo getAppInfo() {
+        return mAppInfo;
     }
 }

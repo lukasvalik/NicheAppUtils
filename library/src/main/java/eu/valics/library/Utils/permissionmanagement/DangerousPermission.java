@@ -2,7 +2,6 @@ package eu.valics.library.Utils.permissionmanagement;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -59,16 +58,9 @@ public abstract class DangerousPermission extends BasePermission {
         String message = "Open Settings, then tap Permissions and turn on " + getTitle();
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
-        builder.setPositiveButton("Open Settings", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName())));
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        builder.setPositiveButton("Open Settings", (dialog, which) -> activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName()))));
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            mPermissionManager.onPermissionNotGranted(getRequestCode());
         });
         builder.show();
     }
