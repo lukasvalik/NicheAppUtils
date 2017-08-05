@@ -43,8 +43,18 @@ public class PermissionManager implements PermissionManagement {
      */
 
     private void subscribePermissionManagerToPermissions() {
-        Observable.fromIterable(mPermissions).doOnNext(p -> p.setPermissionManager(this));
-        Observable.fromIterable(mPermissionGroups).doOnNext(g -> Observable.fromIterable(g.getPermissions()).doOnNext(p -> p.setPermissionManager(this)));
+        //Observable.fromIterable(mPermissions).doOnNext(p -> p.setPermissionManager(this));
+        //Observable.fromIterable(mPermissionGroups).doOnNext(g -> Observable.fromIterable(g.getPermissions()).doOnNext(p -> p.setPermissionManager(this)));
+
+        for (BasePermission permission : mPermissions) {
+            permission.setPermissionManager(this);
+        }
+        for (PermissionGroup group : mPermissionGroups) {
+            for (BasePermission perm: group.getPermissions()) {
+                perm.setPermissionManager(this);
+            }
+        }
+
     }
 
     /**
