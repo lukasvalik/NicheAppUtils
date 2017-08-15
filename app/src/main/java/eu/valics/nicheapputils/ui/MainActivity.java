@@ -1,7 +1,6 @@
 package eu.valics.nicheapputils.ui;
 
 import android.os.Bundle;
-import android.widget.RelativeLayout;
 
 import eu.valics.library.Base.AppInfo;
 import eu.valics.library.Base.BaseActivity;
@@ -17,25 +16,15 @@ public class MainActivity extends BaseActivity {
 
     private static final String INCOMING_EVENTS_GROUP_TITLE = "INCOMING_EVENTS_GROUP_TITLE";
 
-    private RelativeLayout mRootView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mRootView = (RelativeLayout) findViewById(R.id.rootView);
     }
 
     @Override
-    protected void onReadyResume() {
-        mAdPresenter.showBanner(this, mRootView);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mAdPresenter.hideBanner();
+    protected int getRootViewId() {
+        return R.id.rootView;
     }
 
     @Override

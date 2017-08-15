@@ -28,6 +28,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
         super.onCreate(savedInstanceState);
         mAdPresenter = initAdPresenter();
         mActivityPermissionManager = initActivityPermissionManager();
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
         mRootView = getRootViewId() != -1 ? (RelativeLayout) findViewById(getRootViewId()) : null;
     }
 
