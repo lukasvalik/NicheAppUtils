@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.RelativeLayout;
 
 import eu.valics.library.Presenter.AdPresenter;
 import eu.valics.library.Utils.permissionmanagement.PermissionInvalidationListener;
@@ -18,6 +19,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
 
     protected AdPresenter mAdPresenter;
     protected PermissionManager mActivityPermissionManager;
+    protected RelativeLayout mRootView;
 
     protected boolean interstialAdHandled = false;
 
@@ -26,6 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
         super.onCreate(savedInstanceState);
         mAdPresenter = initAdPresenter();
         mActivityPermissionManager = initActivityPermissionManager();
+        mRootView = getRootViewId() != -1 ? (RelativeLayout) findViewById(getRootViewId()) : null;
     }
 
     protected AdPresenter initAdPresenter() {
@@ -72,10 +75,21 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     protected void onActivityPermissionsHandled() {
         mAdPresenter.setShowedInterstitialAd(false);
         interstialAdHandled = false;
+        if (mRootView != null) //
+            mAdPresenter.showBanner(this, (RelativeLayout) findViewById(getRootViewId()));
         onReadyResume();
     }
 
-    protected abstract void onReadyResume();
+    protected void onReadyResume(){}
+
+    /**
+     * Override when want automatically have banner Ad on bottom of screen
+     *
+     * @return id of root relativeLayout
+     */
+    protected int getRootViewId() {
+        return -1;
+    }
 
     protected AdPresenter getAdPresenter() {
         return mAdPresenter;
