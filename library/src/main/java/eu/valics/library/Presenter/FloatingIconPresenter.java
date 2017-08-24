@@ -19,11 +19,6 @@ public class FloatingIconPresenter extends AdPresenter {
         startFloatingIconService();
     }
 
-    @Override
-    public void onPause(){
-        super.onPause();
-    }
-
     public void putFloatingIconToNotification() {
         if(FloatingIcon.get(mContext).getState() == FloatingIcon.SHOW_STATE) {
             AppNotification.get(mContext).createNotificationForFloatingIcon();

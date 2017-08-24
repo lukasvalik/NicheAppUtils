@@ -10,6 +10,8 @@ import android.widget.RelativeLayout;
 import eu.valics.library.Presenter.AdPresenter;
 import eu.valics.library.Utils.permissionmanagement.PermissionInvalidationListener;
 import eu.valics.library.Utils.permissionmanagement.PermissionManager;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by L on 7/19/2017.
@@ -20,8 +22,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     protected AdPresenter mAdPresenter;
     protected PermissionManager mActivityPermissionManager;
     protected RelativeLayout mRootView;
+    private BehaviorSubject<Status> mLifeCycleObservable = BehaviorSubject.create();
+
+    public enum Status {
+        ON_PAUSE,
+        ON_RESUME
+    }
 
     protected boolean interstialAdHandled = false;
+    protected boolean mInterstitialAdTriggerPaused = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +75,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     @Override
     protected void onPause() {
         super.onPause();
-        mAdPresenter.onPause();
+        mAdPresenter.onPause(mInterstitialAdTriggerPaused);
         mActivityPermissionManager.setListener(null);
     }
 
@@ -121,5 +130,24 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     public void onPermissionInvalidated() {
         //TODO here I could turn off activity probably
         interstialAdHandled = false;
+    }
+
+    public void pauseBgTriggeringInterstitialAd() {
+        mInterstitialAdTriggerPaused = true;
+    }
+
+    public void resumeBgTriggeringInterstitialAd() {
+        mInterstitialAdTriggerPaused = false;
+    }
+
+    public void showInterstitialAdOnNextScreen() {
+        AppInfo appInfo = BaseApplication.getInstance().getAppInfo();
+        appInfo.setBufferForInterstitialAd(appInfo.getAdFrequency() + appInfo.getBufferForInterstitialAd());
+        appInfo.setGoInBackground(true);
+    }
+
+    //observing lifecycle in NicheAppDialog - just concept yet
+    public Observable<Status> observeLifeCycle() {
+        return mLifeCycleObservable;
     }
 }

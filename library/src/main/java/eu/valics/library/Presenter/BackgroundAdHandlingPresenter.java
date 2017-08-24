@@ -34,8 +34,8 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         stopTimer();
     }
 
-    public void onPause() {
-        startTimer();
+    public void onPause(boolean pauseBgTriggeringInterstitialAd) {
+        if (!pauseBgTriggeringInterstitialAd) startTimer();
         if (!showingInterstitialAd) mInterstitialAdCreator.removeListener();
     }
 
