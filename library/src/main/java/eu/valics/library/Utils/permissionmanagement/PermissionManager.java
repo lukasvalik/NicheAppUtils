@@ -34,7 +34,8 @@ public class PermissionManager implements PermissionManagement {
                               BaseActivity activity,
                               AppInfo appInfo,
                               ArrayList<BasePermission> permissions,
-                              ArrayList<PermissionGroup> permissionGroups) {
+                              ArrayList<PermissionGroup> permissionGroups,
+                              PermissionManagersWrapper wrapper) {
         mKey = key;
         mPermissions = permissions;
         mPermissionGroups = permissionGroups;
@@ -42,6 +43,7 @@ public class PermissionManager implements PermissionManagement {
         mAppInfo = appInfo;
 
         subscribePermissionManagerToPermissions();
+        wrapper.addPermissionManager(this);
     }
 
     /**
@@ -290,11 +292,13 @@ public class PermissionManager implements PermissionManagement {
         private BaseActivity activity;
         private AppInfo appInfo;
         private String key;
+        private PermissionManagersWrapper wrapper;
 
-        public Builder(String key) {
+        public Builder(String key, PermissionManagersWrapper wrapper) {
             permissions = new ArrayList<>();
             permissionGroups = new ArrayList<>();
             this.key = key;
+            this.wrapper = wrapper;
         }
 
         public Builder with(BaseActivity activity, AppInfo appInfo) {
@@ -315,7 +319,7 @@ public class PermissionManager implements PermissionManagement {
 
         public PermissionManager build() {
             if (activity == null) throw new IllegalArgumentException("Activity cannot be null");
-            return new PermissionManager(key, activity, appInfo, permissions, permissionGroups);
+            return new PermissionManager(key, activity, appInfo, permissions, permissionGroups, wrapper);
         }
     }
 

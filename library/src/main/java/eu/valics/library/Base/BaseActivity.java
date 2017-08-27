@@ -22,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
 
     protected AdPresenter mAdPresenter;
     protected PermissionManager mActivityPermissionManager;
-    private PermissionManagersWrapper mPermissionManagersWrapper;
+    protected PermissionManagersWrapper mPermissionManagersWrapper;
     protected RelativeLayout mRootView;
 
     protected boolean interstialAdHandled = false;
@@ -32,8 +32,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAdPresenter = initAdPresenter();
+        mPermissionManagersWrapper = new PermissionManagersWrapper();
         mActivityPermissionManager = initActivityPermissionManager();
-        mPermissionManagersWrapper = new PermissionManagersWrapper(mActivityPermissionManager);
+        mPermissionManagersWrapper.addPermissionManager(mActivityPermissionManager);
     }
 
     @Override
@@ -47,7 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     }
 
     protected PermissionManager initActivityPermissionManager() {
-        return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY)
+        return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY, mPermissionManagersWrapper)
                 .with(BaseActivity.this, BaseApplication.getInstance().getAppInfo())
                 .build();
     }

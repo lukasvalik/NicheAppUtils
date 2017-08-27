@@ -5,7 +5,8 @@ import java.util.ArrayList;
 /**
  * Created by L on 8/27/2017.
  *
- * Wrapper has list of all subsribed permissionManagers and
+ * Wrapper has list of all subsribed permissionManagers to be aware of which PermissionManager is
+ * requesting permissions right now
  */
 
 public class PermissionManagersWrapper implements OnPermissionRequestedListener {
@@ -13,9 +14,8 @@ public class PermissionManagersWrapper implements OnPermissionRequestedListener 
     private ArrayList<PermissionManager> mPermissionManagers;
     private PermissionManager mRequestingPermissionManager;
 
-    public PermissionManagersWrapper(PermissionManager activityPermissionManager){
+    public PermissionManagersWrapper(){
         mPermissionManagers = new ArrayList<>();
-        addPermissionManager(activityPermissionManager);
     }
 
     public void subscribeAllPermissionManagers() {
@@ -36,10 +36,12 @@ public class PermissionManagersWrapper implements OnPermissionRequestedListener 
     }
 
     public void onPermissionGranted(int requestCode) {
+        if (mRequestingPermissionManager == null) throw new IllegalStateException("RequestPermission is null");
         mRequestingPermissionManager.onPermissionGranted(requestCode);
     }
 
     public void onPermissionNotGranted(int requestCode) {
+        if (mRequestingPermissionManager == null) throw new IllegalStateException("RequestPermission is null");
         mRequestingPermissionManager.onPermissionNotGranted(requestCode);
     }
 
