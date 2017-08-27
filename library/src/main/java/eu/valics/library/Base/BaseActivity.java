@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import eu.valics.library.Presenter.AdPresenter;
 import eu.valics.library.Utils.permissionmanagement.PermissionInvalidationListener;
 import eu.valics.library.Utils.permissionmanagement.PermissionManager;
+import eu.valics.library.Utils.permissionmanagement.PermissionManagersWrapper;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -21,13 +22,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
 
     protected AdPresenter mAdPresenter;
     protected PermissionManager mActivityPermissionManager;
+    private PermissionManagersWrapper mPermissionManagersWrapper;
     protected RelativeLayout mRootView;
-    private BehaviorSubject<Status> mLifeCycleObservable = BehaviorSubject.create();
-
-    public enum Status {
-        ON_PAUSE,
-        ON_RESUME
-    }
 
     protected boolean interstialAdHandled = false;
     protected boolean mInterstitialAdTriggerPaused = false;
@@ -37,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
         super.onCreate(savedInstanceState);
         mAdPresenter = initAdPresenter();
         mActivityPermissionManager = initActivityPermissionManager();
+        mPermissionManagersWrapper = new PermissionManagersWrapper(mActivityPermissionManager);
     }
 
     @Override
@@ -50,13 +47,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     }
 
     protected PermissionManager initActivityPermissionManager() {
-        return new PermissionManager.Builder().with(BaseActivity.this, BaseApplication.getInstance().getAppInfo()).build();
+        return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY)
+                .with(BaseActivity.this, BaseApplication.getInstance().getAppInfo())
+                .build();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mActivityPermissionManager.setListener(this);
+        mActivityPermissionManager.setInvalidationListener(this);
+        mPermissionManagersWrapper.subscribeAllPermissionManagers();
         invalidateAppPausingProcesses();
     }
 
@@ -76,7 +76,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     protected void onPause() {
         super.onPause();
         mAdPresenter.onPause(mInterstitialAdTriggerPaused);
-        mActivityPermissionManager.setListener(null);
+        mActivityPermissionManager.setInvalidationListener(null);
+        mPermissionManagersWrapper.unSubscribeAllPermissionManagers();
     }
 
     protected void onInterstitialAdHandled() {
@@ -118,11 +119,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Now user should be able to use feature
-            mActivityPermissionManager.onPermissionGranted(requestCode);
+            mPermissionManagersWrapper.onPermissionGranted(requestCode);
         } else {
             // Your app will not have this permission. Turn off all functions
             // that require this permission or it will force close
-            mActivityPermissionManager.onPermissionNotGranted(requestCode);
+            mPermissionManagersWrapper.onPermissionNotGranted(requestCode);
         }
     }
 
@@ -147,6 +148,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     }
 
     //observing lifecycle in NicheAppDialog - just concept yet
+
+    private BehaviorSubject<Status> mLifeCycleObservable = BehaviorSubject.create();
+
+    public enum Status {
+        ON_PAUSE,
+        ON_RESUME
+    }
+
     public Observable<Status> observeLifeCycle() {
         return mLifeCycleObservable;
     }

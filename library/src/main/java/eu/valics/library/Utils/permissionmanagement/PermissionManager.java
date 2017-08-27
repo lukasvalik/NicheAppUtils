@@ -18,18 +18,24 @@ import io.reactivex.Observable;
 
 public class PermissionManager implements PermissionManagement {
 
+    public static final String ACTIVITY_PERMISSION_MANAGER_KEY = "ACTIVITY_PERMISSION_MANAGER";
+
     private PermissionInvalidationListener mListener;
+    private OnPermissionRequestedListener mPermissionRequestedListener;
 
     private ArrayList<BasePermission> mPermissions;
     private ArrayList<PermissionGroup> mPermissionGroups;
     private BaseActivity mActivity;
     private AppInfo mAppInfo;
     private BasePermission mPermissionInProgress;
+    private String mKey;
 
-    private PermissionManager(BaseActivity activity,
+    private PermissionManager(String key,
+                              BaseActivity activity,
                               AppInfo appInfo,
                               ArrayList<BasePermission> permissions,
                               ArrayList<PermissionGroup> permissionGroups) {
+        mKey = key;
         mPermissions = permissions;
         mPermissionGroups = permissionGroups;
         mActivity = activity;
@@ -40,6 +46,8 @@ public class PermissionManager implements PermissionManagement {
 
     /**
      * We put reference inside all SettingsPermissions because they do not trigger callback in activity
+     * And also to regular permission to be able handle state when user decides to not show permission again,
+     * but he eventually changes his mind and will need it
      */
 
     private void subscribePermissionManagerToPermissions() {
@@ -57,6 +65,10 @@ public class PermissionManager implements PermissionManagement {
 
     }
 
+    public String getKey() {
+        return mKey;
+    }
+
     /**
      * invalidate during on resume is good to not forget on any of permissions.
      * It also takes our second ask for the fatal permission
@@ -70,6 +82,7 @@ public class PermissionManager implements PermissionManagement {
         if (ignoreDeniedFlag) {
             for (BasePermission permission : mPermissions) {
                 if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
+                    mPermissionRequestedListener.onPermissionRequested(this);
                     permission.askForPermission(mActivity);
                     mAppInfo.setAskedPermission(permission.getRequestCode());
                     mPermissionInProgress = permission;
@@ -88,6 +101,7 @@ public class PermissionManager implements PermissionManagement {
                     for (int i = 0; i < permissions.size(); i++) {
                         BasePermission permission = permissions.get(i);
                         if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
+                            mPermissionRequestedListener.onPermissionRequested(this);
                             permission.askForPermission(mActivity);
                             mAppInfo.setAskedPermission(permission.getRequestCode());
                             mPermissionInProgress = permission;
@@ -275,10 +289,12 @@ public class PermissionManager implements PermissionManagement {
         private ArrayList<PermissionGroup> permissionGroups;
         private BaseActivity activity;
         private AppInfo appInfo;
+        private String key;
 
-        public Builder() {
+        public Builder(String key) {
             permissions = new ArrayList<>();
             permissionGroups = new ArrayList<>();
+            this.key = key;
         }
 
         public Builder with(BaseActivity activity, AppInfo appInfo) {
@@ -299,7 +315,7 @@ public class PermissionManager implements PermissionManagement {
 
         public PermissionManager build() {
             if (activity == null) throw new IllegalArgumentException("Activity cannot be null");
-            return new PermissionManager(activity, appInfo, permissions, permissionGroups);
+            return new PermissionManager(key, activity, appInfo, permissions, permissionGroups);
         }
     }
 
@@ -348,8 +364,12 @@ public class PermissionManager implements PermissionManagement {
         return mListener;
     }
 
-    public void setListener(PermissionInvalidationListener listener) {
+    public void setInvalidationListener(PermissionInvalidationListener listener) {
         mListener = listener;
+    }
+
+    public void setPermissionRequestedListener(OnPermissionRequestedListener listener) {
+        mPermissionRequestedListener = listener;
     }
 
     public BasePermission getPermissionInProgress() {

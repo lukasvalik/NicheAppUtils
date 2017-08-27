@@ -33,7 +33,7 @@ public abstract class OnPermissionClickListener {
 
     private void onPermissionClickListenerInternal() {
         mBaseActivity.pauseBgTriggeringInterstitialAd();
-        mPermissionManager.setListener(mPermissionInvalidationListener);
+        mPermissionManager.setInvalidationListener(mPermissionInvalidationListener);
         mPermissionManager.invalidatePermissions(true);
     }
 }
