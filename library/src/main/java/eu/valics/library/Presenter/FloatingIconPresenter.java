@@ -6,6 +6,7 @@ import eu.valics.library.Base.BaseApplication;
 import eu.valics.library.FloatingIcon.AppNotification;
 import eu.valics.library.FloatingIcon.FloatingIcon;
 import eu.valics.library.FloatingIcon.FloatingIconService;
+import eu.valics.library.Utils.permissionmanagement.Permission.OverlayDrawPermission;
 
 /**
  * Created by L on 9/7/2016.
@@ -15,8 +16,10 @@ public class FloatingIconPresenter extends AdPresenter {
     @Override
     public void onResume(){
         super.onResume();
-        putFloatingIconToNotification();
-        startFloatingIconService();
+        if (OverlayDrawPermission.isPermitted(mContext)) {
+            putFloatingIconToNotification();
+            startFloatingIconService();
+        }
     }
 
     public void putFloatingIconToNotification() {

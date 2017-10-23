@@ -16,6 +16,10 @@
     <string name="camera_permission_permission_description">Camera permission is needed to turn on your phone flashlight during incoming calls or notifications</string>
     <string name="permission_group_description">App need at least one of these permission to be of any use. Read Phone state lets us use flashlight during incoming call while Notification Access let us to lighting effect to notify you when new Notification arrives.</string>
     <string name="permission_group_title">Read Phone State and Notification Access Permission</string>
+    <string name="usage_stats_title">Usage stats permission needed</string>
+    <string name="usage_stats_reason">Permission needed to help you track your messenger open rates</string>
+    <string name="draw_overlay_title">Overlay Permission Needed</string>
+    <string name="draw_overlay_message">Permission needed to enable quick access to app from anywhere</string>
 
 
 </resources>

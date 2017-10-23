@@ -2,6 +2,7 @@ package eu.valics.library.Utils.permissionmanagement;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 
 import eu.valics.library.Base.AppInfo;
 
@@ -18,9 +19,10 @@ public abstract class BasePermission {
     protected String mFatalDialogMessage = "";
     protected AppInfo mAppInfo;
     protected PermissionManager mPermissionManager; // we need to have reference in case user is disabling fatal permissions
+    protected int minVersion = Build.VERSION_CODES.M;
 
     public BasePermission(AppInfo appInfo) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        if (isMinSdkVersion()) {
             mAppInfo = appInfo; // never asked again marked
         } else
             mDenied = false;
@@ -44,6 +46,14 @@ public abstract class BasePermission {
     protected abstract String getTitle();
 
     protected abstract boolean shouldNeverAskAgain(Activity activity);
+
+    public int getMinVersion() {
+        return minVersion;
+    }
+
+    protected boolean isMinSdkVersion() {
+        return Build.VERSION.SDK_INT >= minVersion;
+    }
 
     public boolean isFatal() {
         return mFatal;
@@ -123,5 +133,7 @@ public abstract class BasePermission {
          * Settings Permissions
          */
         public static final int NOTIFICATION_ACCESS = 100;
+        public static final int USAGE_STATS = 101;
+        public static final int DRAW_OVERLAY = 102;
     }
 }

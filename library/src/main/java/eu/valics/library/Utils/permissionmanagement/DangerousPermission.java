@@ -59,9 +59,7 @@ public abstract class DangerousPermission extends BasePermission {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
         builder.setPositiveButton("Open Settings", (dialog, which) -> activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName()))));
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            mPermissionManager.onPermissionNotGranted(getRequestCode());
-        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> mPermissionManager.onPermissionNotGranted(getRequestCode()));
         builder.show();
     }
 }
