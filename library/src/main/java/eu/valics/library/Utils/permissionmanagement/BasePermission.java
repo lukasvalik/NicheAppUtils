@@ -23,6 +23,7 @@ public abstract class BasePermission {
     protected AppInfo mAppInfo;
     protected PermissionManager mPermissionManager; // we need to have reference in case user is disabling fatal permissions
     protected int minVersion = Build.VERSION_CODES.M;
+    protected int dialogStyle = DEFAULT_STYLE;
 
     public BasePermission(AppInfo appInfo) {
         if (isMinSdkVersion()) {

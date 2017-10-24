@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
                         .build();
         permissionGroup.setFatal(true, getString(R.string.permission_group_title), getString(R.string.permission_group_description));
 
-        return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY)
+        return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY, mPermissionManagersWrapper)
                 .with(this, appInfo)
                 .addPermission(cameraPermission)
                 .addPermissionGroup(permissionGroup)

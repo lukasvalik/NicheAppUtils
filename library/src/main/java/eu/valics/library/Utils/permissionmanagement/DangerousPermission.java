@@ -22,7 +22,7 @@ public abstract class DangerousPermission extends BasePermission {
     }
 
     @Override
-    void askForPermission(Activity activity) {
+    void askForPermission(Activity activity, int style) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             activity.requestPermissions(new String[]{getManifestPermission()}, getRequestCode());
         }
@@ -56,7 +56,9 @@ public abstract class DangerousPermission extends BasePermission {
 
     private void showSettingsDialog(final Activity activity) {
         String message = "Open Settings, then tap Permissions and turn on " + getTitle();
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = dialogStyle == DEFAULT_STYLE ?
+                new AlertDialog.Builder(activity) :
+                new AlertDialog.Builder(activity, dialogStyle);
         builder.setMessage(message);
         builder.setPositiveButton("Open Settings", (dialog, which) -> activity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + activity.getApplicationContext().getPackageName()))));
         builder.setNegativeButton("Cancel", (dialog, which) -> mPermissionManager.onPermissionNotGranted(getRequestCode()));

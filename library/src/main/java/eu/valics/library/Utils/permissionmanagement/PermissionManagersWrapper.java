@@ -33,8 +33,8 @@ public class PermissionManagersWrapper implements OnPermissionRequestedListener 
     }
 
     public void addPermissionManager(PermissionManager permissionManager) {
-        if (Observable.fromIterable(mPermissionManagers).filter(manager -> manager.getKey().equals(permissionManager.getKey())).count().blockingGet() > 0)
-            throw new IllegalStateException("Adding multiple permissionManagers with the same key. Already have permissionManager with this key");
+        //if (Observable.fromIterable(mPermissionManagers).filter(manager -> manager.getKey().equals(permissionManager.getKey())).count().blockingGet() > 0)
+        //    throw new IllegalStateException("Adding multiple permissionManagers with the same key. Already have permissionManager with this key");
         permissionManager.setPermissionRequestedListener(this);
         mPermissionManagers.add(permissionManager);
     }

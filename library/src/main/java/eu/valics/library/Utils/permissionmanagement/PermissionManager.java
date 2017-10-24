@@ -14,6 +14,8 @@ import eu.valics.library.Base.BaseActivity;
 import eu.valics.library.R;
 import io.reactivex.Observable;
 
+import static eu.valics.library.Utils.permissionmanagement.BasePermission.DEFAULT_STYLE;
+
 /**
  * Created by L on 7/7/2017.
  */
@@ -298,7 +300,7 @@ public class PermissionManager implements PermissionManagement {
         private AppInfo appInfo;
         private String key;
         private PermissionManagersWrapper wrapper;
-        private int dialogStyle = BasePermission.DEFAULT_STYLE;
+        private int dialogStyle = DEFAULT_STYLE;
 
         public Builder(String key, PermissionManagersWrapper wrapper) {
             permissions = new ArrayList<>();
@@ -339,7 +341,9 @@ public class PermissionManager implements PermissionManagement {
         mPermissionInProgress = permission;
         String title = permissionGroup != null ? permissionGroup.getFatalDialogTitle() : permission.getFatalDialogTitle();
         String message = permissionGroup != null ? permissionGroup.getFatalDialogMessage() : permission.getFatalDialogMessage();
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = mDialogStyle == DEFAULT_STYLE ?
+                new AlertDialog.Builder(mActivity) :
+                new AlertDialog.Builder(mActivity, mDialogStyle);
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
@@ -362,7 +366,9 @@ public class PermissionManager implements PermissionManagement {
     private void showSettingsDialog(final Activity activity, BasePermission permission) {
         //mAskingFatalPermissionInProgress = true;
         String message = "Open Settings, then tap Permissions and turn on " + permission.getTitle();
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = mDialogStyle == DEFAULT_STYLE ?
+                new AlertDialog.Builder(mActivity) :
+                new AlertDialog.Builder(mActivity, mDialogStyle);
         builder.setMessage(message);
         builder.setPositiveButton("Open Settings", (dialog, which) -> {
             mPermissionInProgress = null;
