@@ -2,6 +2,7 @@ package eu.valics.library.Base;
 
 import android.app.Application;
 
+import eu.valics.library.FloatingIcon.FloatingIconConfig;
 import eu.valics.library.NicheAppUtils;
 import eu.valics.library.R;
 import eu.valics.library.Utils.Ads.BackgroundChecker;
@@ -18,6 +19,7 @@ public abstract class BaseApplication extends Application {
 
     protected static BaseApplication sInstance;
     protected AppInfo mAppInfo;
+    protected FloatingIconConfig mFloatingIconConfig;
 
     @Override
     public void onCreate() {
@@ -28,6 +30,15 @@ public abstract class BaseApplication extends Application {
 
         mAppInfo = initAppInfo();
         mAppInfo.setAdFrequency(getAdFrequency());
+
+        mFloatingIconConfig = initFloatingIconConfiguration();
+        if (mFloatingIconConfig != null) {
+            NicheAppUtils.initFloatingIcon(
+                    mFloatingIconConfig.getFloatingIconResId(),
+                    mFloatingIconConfig.getTitle(),
+                    mFloatingIconConfig.getDescription(),
+                    mFloatingIconConfig.getRestartPhrase());
+        }
 
         NicheAppUtils.initAds(getInterstitialAdId(), getBannerAdId());
 
@@ -60,5 +71,9 @@ public abstract class BaseApplication extends Application {
 
     public static BackgroundChecker getBackgroundChecker() {
         return sBackgroundChecker;
+    }
+
+    public FloatingIconConfig initFloatingIconConfiguration() {
+        return null;
     }
 }
