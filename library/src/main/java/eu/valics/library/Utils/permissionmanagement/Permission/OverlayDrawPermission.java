@@ -1,6 +1,8 @@
 package eu.valics.library.Utils.permissionmanagement.Permission;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -41,6 +43,13 @@ public class OverlayDrawPermission extends SettingsPermission {
     @Override
     protected String getTitle() {
         return "Draw overlay";
+    }
+
+    @Override
+    protected void onPermissionProceed(Context context) {
+        super.onPermissionProceed(context);
+        context.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + context.getPackageName())));
     }
 
     public static boolean isPermitted(Context context) {

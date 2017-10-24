@@ -3,6 +3,8 @@ package eu.valics.library.Utils.permissionmanagement;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -29,18 +31,21 @@ public class PermissionManager implements PermissionManagement {
     private AppInfo mAppInfo;
     private BasePermission mPermissionInProgress;
     private String mKey;
+    private int mDialogStyle;
 
     private PermissionManager(String key,
                               BaseActivity activity,
                               AppInfo appInfo,
                               ArrayList<BasePermission> permissions,
                               ArrayList<PermissionGroup> permissionGroups,
-                              PermissionManagersWrapper wrapper) {
+                              PermissionManagersWrapper wrapper,
+                              int dialogStyle) {
         mKey = key;
         mPermissions = permissions;
         mPermissionGroups = permissionGroups;
         mActivity = activity;
         mAppInfo = appInfo;
+        mDialogStyle = dialogStyle;
 
         subscribePermissionManagerToPermissions();
         wrapper.addPermissionManager(this);
@@ -85,7 +90,7 @@ public class PermissionManager implements PermissionManagement {
             for (BasePermission permission : mPermissions) {
                 if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
                     mPermissionRequestedListener.onPermissionRequested(this);
-                    permission.askForPermission(mActivity);
+                    permission.askForPermission(mActivity, mDialogStyle);
                     mAppInfo.setAskedPermission(permission.getRequestCode());
                     mPermissionInProgress = permission;
                     return;
@@ -104,7 +109,7 @@ public class PermissionManager implements PermissionManagement {
                         BasePermission permission = permissions.get(i);
                         if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
                             mPermissionRequestedListener.onPermissionRequested(this);
-                            permission.askForPermission(mActivity);
+                            permission.askForPermission(mActivity, mDialogStyle);
                             mAppInfo.setAskedPermission(permission.getRequestCode());
                             mPermissionInProgress = permission;
                             return;
@@ -121,7 +126,7 @@ public class PermissionManager implements PermissionManagement {
         } else {
             for (BasePermission permission : mPermissions) {
                 if (!permission.isEnabled(mActivity) && !permission.isDenied() && !permission.shouldNeverAskAgain(mActivity)) {
-                    permission.askForPermission(mActivity);
+                    permission.askForPermission(mActivity, mDialogStyle);
                     mAppInfo.setAskedPermission(permission.getRequestCode());
                     mPermissionInProgress = permission;
                     return;
@@ -140,7 +145,7 @@ public class PermissionManager implements PermissionManagement {
                         for (int i = 0; i < permissions.size(); i++) {
                             BasePermission permission = permissions.get(i);
                             if (!permission.isEnabled(mActivity) && !permission.isDenied() && !permission.shouldNeverAskAgain(mActivity)) {
-                                permission.askForPermission(mActivity);
+                                permission.askForPermission(mActivity, mDialogStyle);
                                 mAppInfo.setAskedPermission(permission.getRequestCode());
                                 //mAskingFatalPermissionInProgress = true;
                                 mPermissionInProgress = permission;
@@ -293,6 +298,7 @@ public class PermissionManager implements PermissionManagement {
         private AppInfo appInfo;
         private String key;
         private PermissionManagersWrapper wrapper;
+        private int dialogStyle = BasePermission.DEFAULT_STYLE;
 
         public Builder(String key, PermissionManagersWrapper wrapper) {
             permissions = new ArrayList<>();
@@ -317,9 +323,14 @@ public class PermissionManager implements PermissionManagement {
             return this;
         }
 
+        public Builder dialogStyle(int dialogStyle) {
+            this.dialogStyle = dialogStyle;
+            return this;
+        }
+
         public PermissionManager build() {
             if (activity == null) throw new IllegalArgumentException("Activity cannot be null");
-            return new PermissionManager(key, activity, appInfo, permissions, permissionGroups, wrapper);
+            return new PermissionManager(key, activity, appInfo, permissions, permissionGroups, wrapper, dialogStyle);
         }
     }
 
@@ -386,5 +397,13 @@ public class PermissionManager implements PermissionManagement {
 
     public AppInfo getAppInfo() {
         return mAppInfo;
+    }
+
+    public int getDialogStyle() {
+        return mDialogStyle;
+    }
+
+    public void setDialogStyle(int dialogStyle) {
+        mDialogStyle = dialogStyle;
     }
 }

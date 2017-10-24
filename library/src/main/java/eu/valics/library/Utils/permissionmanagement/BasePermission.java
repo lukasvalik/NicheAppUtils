@@ -3,6 +3,7 @@ package eu.valics.library.Utils.permissionmanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.StyleRes;
 
 import eu.valics.library.Base.AppInfo;
 
@@ -11,6 +12,8 @@ import eu.valics.library.Base.AppInfo;
  */
 
 public abstract class BasePermission {
+
+    public static final int DEFAULT_STYLE = -1;
 
     protected boolean mDenied = false;
     protected boolean mFatal = false;
@@ -33,7 +36,7 @@ public abstract class BasePermission {
         mPermissionManager = permissionManager;
     }
 
-    abstract void askForPermission(Activity activity); //return granted?
+    abstract void askForPermission(Activity activity, int styleRes); //return granted?
 
     abstract boolean isEnabled(Context context);
 

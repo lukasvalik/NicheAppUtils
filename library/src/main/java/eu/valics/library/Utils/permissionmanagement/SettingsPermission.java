@@ -20,12 +20,12 @@ public abstract class SettingsPermission extends BasePermission {
         super(appInfo);
     }
 
-    @Override
-    public void askForPermission(final Activity context) {
+    public void askForPermission(final Activity context, int style) {
         if (!mPermissionInProgress) {
             mPermissionInProgress = true;
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = style == DEFAULT_STYLE ?
+                    new AlertDialog.Builder(context) :
+                    new AlertDialog.Builder(context, style);
             builder.setTitle(getPermissionTitle());
             builder.setMessage(getPermissionReason());
             builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
@@ -36,6 +36,7 @@ public abstract class SettingsPermission extends BasePermission {
                 mPermissionInProgress = false;
                 onPermissionDenied();
             });
+            builder.setCancelable(!isFatal());
             builder.show();
         }
     }
@@ -58,7 +59,7 @@ public abstract class SettingsPermission extends BasePermission {
 
     protected void onPermissionDenied() {
         mDenied = true;
-        mPermissionManager.onPermissionDenied(RequestCode.NOTIFICATION_ACCESS);
+        mPermissionManager.onPermissionDenied(getRequestCode());
         mPermissionManager.setPermissionInProgress(null);
     }
 

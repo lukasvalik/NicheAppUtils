@@ -2,7 +2,10 @@ package eu.valics.library.Utils.permissionmanagement.Permission;
 
 import android.app.AppOpsManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import eu.valics.library.Base.AppInfo;
 import eu.valics.library.R;
@@ -42,6 +45,12 @@ public class UsageStatsPermission extends SettingsPermission {
     @Override
     protected String getTitle() {
         return "Usage Stats";
+    }
+
+    @Override
+    protected void onPermissionProceed(Context context) {
+        super.onPermissionProceed(context);
+        context.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
     }
 
     public static boolean isPermitted(Context context) {
