@@ -39,7 +39,7 @@ public abstract class SettingsPermission extends BasePermission {
 
             if (descriptionDrawable != null && buttonBackgroundDrawable != null) {
 
-                SettingsPermissionDialog settingsPermission =
+                SettingsPermissionDialog settingsPermissionDialog =
                         new SettingsPermissionDialog.Builder()
                                 .with(context)
                                 .style(style)
@@ -48,16 +48,16 @@ public abstract class SettingsPermission extends BasePermission {
                                 .setImageDescription(descriptionDrawable)
                                 .setButtonBackground(buttonBackgroundDrawable)
                                 .build();
-                settingsPermission.setCancelable(false);
-                settingsPermission.setPositiveButtonClickListener(new View.OnClickListener() {
+                settingsPermissionDialog.setCancelable(false);
+                settingsPermissionDialog.setPositiveButtonClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         mPermissionInProgress = false;
                         onPermissionProceed(context);
-                        settingsPermission.dismiss();
+                        settingsPermissionDialog.dismiss();
                     }
                 });
-                settingsPermission.show();
+                settingsPermissionDialog.show();
             } else {
                 AlertDialog.Builder builder = style == DEFAULT_STYLE ?
                         new AlertDialog.Builder(context) :
