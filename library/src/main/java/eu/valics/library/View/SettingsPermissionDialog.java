@@ -48,7 +48,7 @@ public class SettingsPermissionDialog extends AlertDialog {
         ((AppCompatTextView)view.findViewById(R.id.message)).setText(message);
         ((AppCompatImageView)view.findViewById(R.id.image)).setBackgroundDrawable(image);
 
-        AppCompatButton positiveButton = view.findViewById(R.id.positive_button);
+        positiveButton = view.findViewById(R.id.positive_button);
         positiveButton.setBackground(buttonBackground);
 
         setView(view);
