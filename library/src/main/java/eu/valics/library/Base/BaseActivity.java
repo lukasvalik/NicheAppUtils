@@ -118,6 +118,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        mActivityPermissionManager.setInvalidationListener(this);
+        mPermissionManagersWrapper.subscribeAllPermissionManagers();
+
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // Now user should be able to use feature
             mPermissionManagersWrapper.onPermissionGranted(requestCode);

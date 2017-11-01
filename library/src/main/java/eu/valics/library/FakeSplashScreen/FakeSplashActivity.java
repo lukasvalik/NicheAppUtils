@@ -93,11 +93,11 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
         if (mAppInfo.isOnline()) {
             if (mAppInfo.isFirstRun()) {
                 firstRun = true;
-                mAppInfo.setBufferForInterstitialAd(mAdFrequency - 1);
+                mAppInfo.setBufferForInterstitialAd(mAdFrequency);
                 mInterstitialAdCreator.requestNewInterstitial();
                 mInterstitialAdCreator.setListener(this);
                 mFakeLoading.startLoading(this);
-            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency - 1 &&
+            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency &&
                     !mInterstitialAdCreator.getInterstitialAd().isLoaded()) {
                 mInterstitialAdCreator.requestNewInterstitial();
                 mInterstitialAdCreator.setListener(this);

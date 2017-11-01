@@ -37,10 +37,13 @@ public class MainActivity extends BaseActivity {
 
         ReadPhoneStatePermission readPhoneStatePermission = new ReadPhoneStatePermission(appInfo);
 
-        NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(
+        NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(appInfo);
+                /*
+                new NotificationAccessPermission(
                 appInfo,
                 ContextCompat.getDrawable(this, R.drawable.permission_image),
                 ContextCompat.getDrawable(this, R.drawable.rounded_button));
+                */
 
         PermissionGroup permissionGroup =
                 new PermissionGroup.Builder()

@@ -61,8 +61,8 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
                     showingInterstitialAd = true;
                     mInterstitialAdCreator.showInterstatialAd();
                 } else if (mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone()) {
-                    //int decreaseAdBuffer = mAppInfo.getBufferForInterstitialAd() - 1;
-                    //mAppInfo.setBufferForInterstitialAd(decreaseAdBuffer);
+                    int decreaseAdBuffer = mAppInfo.getBufferForInterstitialAd() - 1;
+                    mAppInfo.setBufferForInterstitialAd(decreaseAdBuffer);
                     SplashActivityLauncher.launch(mContext); // launcher activity should be splash
                 }
             }
