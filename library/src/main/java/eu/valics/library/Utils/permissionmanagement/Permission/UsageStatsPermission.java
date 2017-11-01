@@ -3,6 +3,7 @@ package eu.valics.library.Utils.permissionmanagement.Permission;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -19,6 +20,11 @@ public class UsageStatsPermission extends SettingsPermission {
 
     public UsageStatsPermission(AppInfo appInfo) {
         super(appInfo);
+        minVersion = Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    public UsageStatsPermission(AppInfo appInfo, Drawable descriptionDrawable, Drawable buttonBackgroundDrawable) {
+        super(appInfo, descriptionDrawable, buttonBackgroundDrawable);
         minVersion = Build.VERSION_CODES.LOLLIPOP;
     }
 

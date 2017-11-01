@@ -3,8 +3,6 @@ package eu.valics.library.Utils.permissionmanagement;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
 import android.support.v7.app.AlertDialog;
 
 import java.util.ArrayList;
@@ -67,7 +65,7 @@ public class PermissionManager implements PermissionManagement {
             permission.setPermissionManager(this);
         }
         for (PermissionGroup group : mPermissionGroups) {
-            for (BasePermission perm: group.getPermissions()) {
+            for (BasePermission perm : group.getPermissions()) {
                 perm.setPermissionManager(this);
             }
         }
@@ -88,83 +86,40 @@ public class PermissionManager implements PermissionManagement {
     public void invalidatePermissions(boolean ignoreDeniedFlag) {
         //if (mAskingFatalPermissionInProgress) return;
         if (mPermissionInProgress != null) return;
-        if (ignoreDeniedFlag) {
-            for (BasePermission permission : mPermissions) {
-                if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
-                    mPermissionRequestedListener.onPermissionRequested(this);
-                    permission.askForPermission(mActivity, mDialogStyle);
-                    mAppInfo.setAskedPermission(permission.getRequestCode());
-                    mPermissionInProgress = permission;
-                    return;
-                } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
-                    showSettingsDialog(mActivity, permission);
-                    mPermissionInProgress = permission;
-                    return;
-                } else {
-                    permission.setDenied(true);
-                }
-            }
-            if (mPermissionGroups.size() > 0) {
-                for (PermissionGroup permissionGroup : mPermissionGroups) {
-                    ArrayList<BasePermission> permissions = permissionGroup.getPermissions();
-                    for (int i = 0; i < permissions.size(); i++) {
-                        BasePermission permission = permissions.get(i);
-                        if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity)) {
-                            mPermissionRequestedListener.onPermissionRequested(this);
-                            permission.askForPermission(mActivity, mDialogStyle);
-                            mAppInfo.setAskedPermission(permission.getRequestCode());
-                            mPermissionInProgress = permission;
-                            return;
-                        } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
-                            showSettingsDialog(mActivity, permission);
-                            mPermissionInProgress = permission;
-                            return;
-                        } else {
-                            permission.setDenied(true);
-                        }
-                    }
-                }
-            }
-        } else {
-            for (BasePermission permission : mPermissions) {
-                if (!permission.isEnabled(mActivity) && !permission.isDenied() && !permission.shouldNeverAskAgain(mActivity)) {
-                    permission.askForPermission(mActivity, mDialogStyle);
-                    mAppInfo.setAskedPermission(permission.getRequestCode());
-                    mPermissionInProgress = permission;
-                    return;
-                } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permission.isFatal()) {
-                    showSettingsDialog(mActivity, permission);
-                    mPermissionInProgress = permission;
-                    return;
-                } else {
-                    permission.setDenied(true);
-                }
-            }
-            if (mPermissionGroups.size() > 0) {
-                for (PermissionGroup permissionGroup : mPermissionGroups) {
-                    if (!permissionGroup.isDenied()) {
-                        ArrayList<BasePermission> permissions = permissionGroup.getPermissions();
-                        for (int i = 0; i < permissions.size(); i++) {
-                            BasePermission permission = permissions.get(i);
-                            if (!permission.isEnabled(mActivity) && !permission.isDenied() && !permission.shouldNeverAskAgain(mActivity)) {
-                                permission.askForPermission(mActivity, mDialogStyle);
-                                mAppInfo.setAskedPermission(permission.getRequestCode());
-                                //mAskingFatalPermissionInProgress = true;
-                                mPermissionInProgress = permission;
-                                return;
-                            } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) && permissionGroup.isFatal()) {
-                                showSettingsDialog(mActivity, permission);
-                                mPermissionInProgress = permission;
-                                return;
-                            } else {
-                                permission.setDenied(true);
-                            }
-                        }
-                    }
+
+        for (BasePermission permission : mPermissions) {
+            if (isPermissionToHandle(permission, ignoreDeniedFlag))
+                return; // we are gonna show dialog and other permissions will be invalidated in next round
+        }
+        if (mPermissionGroups.size() > 0) {
+            for (PermissionGroup permissionGroup : mPermissionGroups) {
+                ArrayList<BasePermission> permissions = permissionGroup.getPermissions();
+                for (int i = 0; i < permissions.size(); i++) {
+                    if (isPermissionToHandle(permissions.get(i), ignoreDeniedFlag))
+                        return;
                 }
             }
         }
+
         if (mListener != null) mListener.onPermissionInvalidated();
+    }
+
+    private boolean isPermissionToHandle(BasePermission permission, boolean ignoreDenyFlag) {
+        if (!permission.isEnabled(mActivity) && !permission.shouldNeverAskAgain(mActivity) &&
+                (ignoreDenyFlag || !permission.isDenied())) {
+            mPermissionRequestedListener.onPermissionRequested(this);
+            permission.askForPermission(mActivity, mDialogStyle);
+            mAppInfo.setAskedPermission(permission.getRequestCode());
+            mPermissionInProgress = permission;
+        } else if (!permission.isEnabled(mActivity) && permission.shouldNeverAskAgain(mActivity) &&
+                permission.isFatal() && (ignoreDenyFlag || !permission.isDenied())) {
+            showSettingsDialog(mActivity, permission);
+            mPermissionInProgress = permission;
+        } else {
+            permission.setDenied(true);
+            return false;
+        }
+        return true;
     }
 
     private PermissionGroup findPermissionGroup(String permissionGroupTitle) {
@@ -198,10 +153,10 @@ public class PermissionManager implements PermissionManagement {
      */
 
     public boolean enabledAllFatalPermissions() {
-        return Observable.fromIterable(mPermissions).filter(p->p.isFatal() && !p.isEnabled(mActivity)).count().blockingGet() == 0 &&
+        return Observable.fromIterable(mPermissions).filter(p -> p.isFatal() && !p.isEnabled(mActivity)).count().blockingGet() == 0 &&
                 Observable
                         .fromIterable(mPermissionGroups)
-                        .filter(group-> group.isFatal() && group.getPermissions().size() > 0 && Observable.fromIterable(group.getPermissions()).filter(p -> p.isEnabled(mActivity)).count().blockingGet() == 0)
+                        .filter(group -> group.isFatal() && group.getPermissions().size() > 0 && Observable.fromIterable(group.getPermissions()).filter(p -> p.isEnabled(mActivity)).count().blockingGet() == 0)
                         .count()
                         .blockingGet() == 0;
     }
@@ -250,7 +205,8 @@ public class PermissionManager implements PermissionManagement {
             if (permissionGroup != null && permissionGroup.allOtherPermissionsDenied(permission)) {
                 permissionGroup.setDenied(true);
             }
-            mActivity.invalidateAppPausingProcesses();
+            // commented out because calling this method will happen in onResume
+            //mActivity.invalidateAppPausingProcesses();
         }
     }
 
@@ -273,7 +229,8 @@ public class PermissionManager implements PermissionManagement {
                 permissionGroup.setDenied(true);
             }
             mPermissionInProgress = null;
-            mActivity.invalidateAppPausingProcesses();
+            // commented out because calling this method will happen in onResume
+            //mActivity.invalidateAppPausingProcesses();
         }
     }
 
@@ -286,11 +243,11 @@ public class PermissionManager implements PermissionManagement {
     }
 
     public boolean isPermissionEnabledFromList(ArrayList<BasePermission> permissions, int requestCode) {
-        return Observable.fromIterable(permissions).filter(p->p.getRequestCode() == requestCode && p.isEnabled(mActivity)).count().blockingGet() > 0;
+        return Observable.fromIterable(permissions).filter(p -> p.getRequestCode() == requestCode && p.isEnabled(mActivity)).count().blockingGet() > 0;
     }
 
     public boolean isEnabledGroup(String title) {
-        return Observable.fromIterable(mPermissionGroups).filter(g-> g.getTitle().equals(title) && g.isEnabled(mActivity)).count().blockingGet() > 0;
+        return Observable.fromIterable(mPermissionGroups).filter(g -> g.getTitle().equals(title) && g.isEnabled(mActivity)).count().blockingGet() > 0;
     }
 
     public static class Builder {

@@ -56,7 +56,6 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
             mAppInfo.setBufferForInterstitialAd(adBuffer);
 
             if (adBuffer >= mAdFrequency) {
-
                 if (mInterstitialAdCreator.getInterstitialAd().isLoaded()) {
                     mInterstitialAdCreator.setListener(this);
                     showingInterstitialAd = true;
@@ -118,7 +117,7 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         showingInterstitialAd = false;
         showedInterstitialAd = true;
         mInterstitialAdCreator.removeListener();
-        mInterstitialAdCreator.requestNewInterstitial();
+        mInterstitialAdCreator.resetInterstitialAd(mContext); // always need to be showed loading, this is easiest way to
     }
 
     @Override

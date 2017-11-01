@@ -1,6 +1,7 @@
 package eu.valics.nicheapputils.ui;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import eu.valics.library.Base.AppInfo;
 import eu.valics.library.Base.BaseActivity;
@@ -33,8 +34,14 @@ public class MainActivity extends BaseActivity {
 
         CameraPermission cameraPermission = new CameraPermission(appInfo);
         cameraPermission.setFatal(true, getString(R.string.camera_permission), getString(R.string.camera_permission_permission_description));
+
         ReadPhoneStatePermission readPhoneStatePermission = new ReadPhoneStatePermission(appInfo);
-        NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(appInfo);
+
+        NotificationAccessPermission notificationAccessPermission = new NotificationAccessPermission(
+                appInfo,
+                ContextCompat.getDrawable(this, R.drawable.permission_image),
+                ContextCompat.getDrawable(this, R.drawable.rounded_button));
+
         PermissionGroup permissionGroup =
                 new PermissionGroup.Builder()
                         .title(INCOMING_EVENTS_GROUP_TITLE)
@@ -45,6 +52,7 @@ public class MainActivity extends BaseActivity {
 
         return new PermissionManager.Builder(PermissionManager.ACTIVITY_PERMISSION_MANAGER_KEY, mPermissionManagersWrapper)
                 .with(this, appInfo)
+                .dialogStyle(R.style.AppCompatAlertDialogStyle)
                 .addPermission(cameraPermission)
                 .addPermissionGroup(permissionGroup)
                 .build();

@@ -73,10 +73,10 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
     }
 
     private void initViews() {
-        mRootView = (RelativeLayout) mContentView.findViewById(R.id.rootView);
-        mLogoImage = (ImageView) mContentView.findViewById(R.id.iconLogo);
-        mProgressWheel = (ProgressWheel) mContentView.findViewById(R.id.progress_wheel);
-        mLoadingTextView = (TextView) mContentView.findViewById(R.id.loadingText);
+        mRootView = mContentView.findViewById(R.id.rootView);
+        mLogoImage = mContentView.findViewById(R.id.iconLogo);
+        mProgressWheel = mContentView.findViewById(R.id.progress_wheel);
+        mLoadingTextView = mContentView.findViewById(R.id.loadingText);
     }
 
     @Override
@@ -97,7 +97,8 @@ public abstract class FakeSplashActivity extends AppCompatActivity implements On
                 mInterstitialAdCreator.requestNewInterstitial();
                 mInterstitialAdCreator.setListener(this);
                 mFakeLoading.startLoading(this);
-            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency - 1) {
+            } else if (mAppInfo.getBufferForInterstitialAd() >= mAdFrequency - 1 &&
+                    !mInterstitialAdCreator.getInterstitialAd().isLoaded()) {
                 mInterstitialAdCreator.requestNewInterstitial();
                 mInterstitialAdCreator.setListener(this);
                 mFakeLoading.startLoading(this);

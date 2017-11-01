@@ -2,6 +2,7 @@ package eu.valics.library.Utils.permissionmanagement.Permission;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -18,6 +19,10 @@ public class OverlayDrawPermission extends SettingsPermission {
 
     public OverlayDrawPermission(AppInfo appInfo) {
         super(appInfo);
+    }
+
+    public OverlayDrawPermission(AppInfo appInfo, Drawable descriptionDrawable, Drawable buttonBackgroundDrawable) {
+        super(appInfo, descriptionDrawable, buttonBackgroundDrawable);
     }
 
     @Override

@@ -3,6 +3,7 @@ package eu.valics.library.Utils.permissionmanagement.Permission;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 
 import eu.valics.library.Base.AppInfo;
@@ -17,6 +18,10 @@ public class NotificationAccessPermission extends SettingsPermission {
 
     public NotificationAccessPermission(AppInfo appInfo){
         super(appInfo);
+    }
+
+    public NotificationAccessPermission(AppInfo appInfo, Drawable descriptionDrawable, Drawable buttonBackgroundDrawable){
+        super(appInfo, descriptionDrawable, buttonBackgroundDrawable);
     }
 
     @Override

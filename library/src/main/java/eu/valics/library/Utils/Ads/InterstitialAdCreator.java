@@ -13,8 +13,6 @@ import eu.valics.library.NicheAppUtils;
  */
 public class InterstitialAdCreator {
 
-    public static final int BULGARIAN_CONSTANT = 1;
-
     private static final String DEV_INTERSTITIAL_AD_ID = "ca-app-pub-3940256099942544/1033173712";
 
     /**
@@ -28,10 +26,13 @@ public class InterstitialAdCreator {
         NOT_LOADING, IS_LOADING, LOADED
     }
 
-    public interface InterstitialListener{
+    public interface InterstitialListener {
         void onLoadedAd();
+
         void onShowedAd();
+
         void onClosedAd();
+
         void onNotLoaded();
     }
 
@@ -41,30 +42,34 @@ public class InterstitialAdCreator {
 
     private state mState;
 
-    public InterstitialAdCreator(Context context){
+    public InterstitialAdCreator(Context context) {
+        resetInterstitialAd(context);
+    }
 
-        mInterstitialAd = new InterstitialAd(context);
-        if (NicheAppUtils.getInterstitialAdId() != null)
-            mInterstitialAd.setAdUnitId(NicheAppUtils.getInterstitialAdId());
-        else
-            mInterstitialAd.setAdUnitId(DEV_INTERSTITIAL_AD_ID);
+    public void resetInterstitialAd(Context context) {
+        mInterstitialAd = new InterstitialAd(context.getApplicationContext());
+        mInterstitialAd.setAdUnitId(NicheAppUtils.getInterstitialAdId() == null ?
+                DEV_INTERSTITIAL_AD_ID :
+                NicheAppUtils.getInterstitialAdId());
+
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
-            public void onAdLoaded(){
+            public void onAdLoaded() {
                 mState = state.LOADED;
-                if(mListener !=null)
+                if (mListener != null)
                     mListener.onLoadedAd();
             }
+
             @Override
             public void onAdClosed() {
                 mState = state.NOT_LOADING;
-                if(mListener !=null)
+                if (mListener != null)
                     mListener.onClosedAd();
             }
         });
     }
 
-    public void setAdUnitId(String adUnitId){
+    public void setAdUnitId(String adUnitId) {
         mInterstitialAd.setAdUnitId(adUnitId);
     }
 
@@ -79,25 +84,25 @@ public class InterstitialAdCreator {
         try {
             mState = state.IS_LOADING;
             mInterstitialAd.loadAd(adRequest);
-        } catch (Exception e){
+        } catch (Exception e) {
             //Log.e("Unable to load ad", e.getMessage());
             mState = state.NOT_LOADING;
         }
 
     }
 
-    public void showInterstatialAd(){
+    public void showInterstatialAd() {
         if (mInterstitialAd.isLoaded()) {
-            if(mListener!=null)
+            if (mListener != null)
                 mListener.onShowedAd();
             mInterstitialAd.show();
         } else {
-            if(mListener!=null)
+            if (mListener != null)
                 mListener.onNotLoaded();
         }
     }
 
-    public InterstitialAd getInterstitialAd(){
+    public InterstitialAd getInterstitialAd() {
         return mInterstitialAd;
     }
 
@@ -109,7 +114,7 @@ public class InterstitialAdCreator {
         mListener = listener;
     }
 
-    public void removeListener(){
+    public void removeListener() {
         mListener = null;
     }
 
