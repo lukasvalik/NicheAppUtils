@@ -20,15 +20,15 @@ import eu.valics.library.Utils.permissionmanagement.BasePermission;
 public class SettingsPermissionDialog extends AlertDialog {
 
     private int style;
+    private AppCompatButton positiveButton;
 
     private SettingsPermissionDialog(Context context,
                                        CharSequence title,
                                        CharSequence message,
                                        Drawable image,
-                                       Drawable buttonBackground,
-                                       View.OnClickListener onClickListener) {
+                                       Drawable buttonBackground) {
         super(context);
-        initViews(context, title, message, image, buttonBackground, onClickListener);
+        initViews(context, title, message, image, buttonBackground);
     }
 
     private SettingsPermissionDialog(Context context,
@@ -36,13 +36,12 @@ public class SettingsPermissionDialog extends AlertDialog {
                                      CharSequence title,
                                      CharSequence message,
                                      Drawable image,
-                                     Drawable buttonBackground,
-                                     View.OnClickListener onClickListener) {
+                                     Drawable buttonBackground) {
         super(context, style);
-        initViews(context, title, message, image, buttonBackground, onClickListener);
+        initViews(context, title, message, image, buttonBackground);
     }
 
-    private void initViews(Context context, CharSequence title, CharSequence message, Drawable image, Drawable buttonBackground, View.OnClickListener onClickListener) {
+    private void initViews(Context context, CharSequence title, CharSequence message, Drawable image, Drawable buttonBackground) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_permission_settings, null);
         ((AppCompatTextView)view.findViewById(R.id.title)).setText(title);
@@ -51,9 +50,12 @@ public class SettingsPermissionDialog extends AlertDialog {
 
         AppCompatButton positiveButton = view.findViewById(R.id.positive_button);
         positiveButton.setBackground(buttonBackground);
-        positiveButton.setOnClickListener(onClickListener);
 
         setView(view);
+    }
+
+    public void setPositiveButtonClickListener(View.OnClickListener onClickListener) {
+        positiveButton.setOnClickListener(onClickListener);
     }
 
 
@@ -92,11 +94,6 @@ public class SettingsPermissionDialog extends AlertDialog {
             return this;
         }
 
-        public Builder setPositiveButton(View.OnClickListener onClickListener) {
-            positiveClickListener = onClickListener;
-            return this;
-        }
-
         public Builder style(int style) {
             this.style = style;
             return this;
@@ -104,8 +101,8 @@ public class SettingsPermissionDialog extends AlertDialog {
 
         public SettingsPermissionDialog build() {
             return style == BasePermission.DEFAULT_STYLE ?
-                    new SettingsPermissionDialog(context, title, message, image, buttonBackground, positiveClickListener) :
-                    new SettingsPermissionDialog(context, style, title, message, image, buttonBackground, positiveClickListener);
+                    new SettingsPermissionDialog(context, title, message, image, buttonBackground) :
+                    new SettingsPermissionDialog(context, style, title, message, image, buttonBackground);
         }
     }
 }

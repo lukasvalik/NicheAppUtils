@@ -47,15 +47,16 @@ public abstract class SettingsPermission extends BasePermission {
                                 .setMessage(context.getString(getPermissionReason()))
                                 .setImageDescription(descriptionDrawable)
                                 .setButtonBackground(buttonBackgroundDrawable)
-                                .setPositiveButton(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        mPermissionInProgress = false;
-                                        onPermissionProceed(context);
-                                    }
-                                })
                                 .build();
                 settingsPermission.setCancelable(false);
+                settingsPermission.setPositiveButtonClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mPermissionInProgress = false;
+                        onPermissionProceed(context);
+                        settingsPermission.dismiss();
+                    }
+                });
                 settingsPermission.show();
             } else {
                 AlertDialog.Builder builder = style == DEFAULT_STYLE ?
