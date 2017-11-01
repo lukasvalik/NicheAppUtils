@@ -63,10 +63,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Permissi
 
     public void invalidateAppPausingProcesses() {
         if (!interstialAdHandled) {
-            interstialAdHandled = true;
+            boolean isGonnaLoadAd = mAdPresenter.isGoingToLoadInterstitialAd();
             boolean isGonnaPause = mAdPresenter.isGoingToPauseActivity();
+            interstialAdHandled = !isGonnaLoadAd || isGonnaPause;
             mAdPresenter.onResume();
-            if (!isGonnaPause) onInterstitialAdHandled();
+            if (interstialAdHandled) onInterstitialAdHandled();
         } else {
             mAdPresenter.stopTimer();
             onInterstitialAdHandled();

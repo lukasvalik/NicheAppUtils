@@ -39,14 +39,24 @@ abstract class BackgroundAdHandlingPresenter implements InterstitialAdCreator.In
         if (!showingInterstitialAd) mInterstitialAdCreator.removeListener();
     }
 
+    public boolean isGoingToLoadInterstitialAd() {
+        boolean wasInBg = mAppInfo.wasInBackground();
+        boolean showingAd = showingInterstitialAd;
+        int buffer = mAppInfo.getBufferForInterstitialAd();
+        boolean bufferOverflow = buffer + 1 >= mAdFrequency;
+        boolean adLoaded = mInterstitialAdCreator.getInterstitialAd().isLoaded();
+        //boolean splashLoadedDone = mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone();
+        return wasInBg && ! showingAd && bufferOverflow && !adLoaded;
+    }
+
     public boolean isGoingToPauseActivity() {
         boolean wasInBg = mAppInfo.wasInBackground();
         boolean showingAd = showingInterstitialAd;
         int buffer = mAppInfo.getBufferForInterstitialAd();
         boolean bufferOverflow = buffer + 1 >= mAdFrequency;
         boolean adLoaded = mInterstitialAdCreator.getInterstitialAd().isLoaded();
-        boolean splashLoadedDone = mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone();
-        return wasInBg && ! showingAd && bufferOverflow && (adLoaded || splashLoadedDone);
+        //boolean splashLoadedDone = mAppInfo.isOnline() && !mAppInfo.wasLoadingOfAppIsDone();
+        return wasInBg && ! showingAd && bufferOverflow && adLoaded;
     }
 
     protected void handleBackgroundStateAndInterstitialAd() {
