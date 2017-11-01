@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
-version = "0.5.26"
+version = "0.5.27"
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -10,7 +10,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
-        versionName "0.5.26"
+        versionName "0.5.27"
     }
     buildTypes {
         release {
@@ -31,9 +31,9 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     //progress bar
-    implementation 'com.pnikosis:materialish-progress:1.7'
+    api 'com.pnikosis:materialish-progress:1.7'
     //Ads
-    implementation 'com.google.android.gms:play-services-ads:9.6.1'
+    api 'com.google.android.gms:play-services-ads:9.6.1'
 
     //RxAndroid
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
