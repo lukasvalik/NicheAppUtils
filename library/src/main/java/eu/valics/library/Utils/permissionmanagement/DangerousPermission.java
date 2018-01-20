@@ -1,5 +1,6 @@
 package eu.valics.library.Utils.permissionmanagement;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -21,17 +22,17 @@ public abstract class DangerousPermission extends BasePermission {
         super(appInfo);
     }
 
+    // if smaller then 23, permission will return enabled, so askForPermission will not be called
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     void askForPermission(Activity activity, int style) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity.requestPermissions(new String[]{getManifestPermission()}, getRequestCode());
-        }
+        activity.requestPermissions(new String[]{getManifestPermission()}, getRequestCode());
     }
 
     @Override
     public boolean isEnabled(Context context) {
-        return !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                context.checkSelfPermission(getManifestPermission()) != PackageManager.PERMISSION_GRANTED);
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+                context.checkSelfPermission(getManifestPermission()) == PackageManager.PERMISSION_GRANTED;
     }
 
     protected abstract int getRequestCode();

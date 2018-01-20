@@ -58,6 +58,6 @@ public class OverlayDrawPermission extends SettingsPermission {
     }
 
     public static boolean isPermitted(Context context) {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context);
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context);
     }
 }
