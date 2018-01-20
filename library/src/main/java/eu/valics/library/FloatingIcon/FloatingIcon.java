@@ -14,7 +14,7 @@ import eu.valics.library.NicheAppUtils;
 /**
  * Created by L on 9/7/2016.
  */
-public class FloatingIcon extends ImageView {
+public class FloatingIcon extends android.support.v7.widget.AppCompatImageView {
     public static final int SHOW_STATE = 1;
     public static final int NOTIFICATION_STATE = 0;
 
@@ -24,31 +24,45 @@ public class FloatingIcon extends ImageView {
     private int state;
 
     private FloatingIcon(Context context) {
-        super(context);
+        this(context, null);
+    }
 
+    public FloatingIcon(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public FloatingIcon(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context) {
         setImageResource(NicheAppUtils.getFloatingIconId());
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT);
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT,
+                        android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O ?
+                                WindowManager.LayoutParams.TYPE_PHONE :
+                                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
 
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
         //params.y = 100;
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if (Settings.canDrawOverlays(context)) {
-                windowManager.addView(this, params);
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 
-                setState(NOTIFICATION_STATE);
-                AppNotification.get(context).createNotificationForFloatingIcon();
-            }
-        } else {
+            windowManager.addView(this, params);
+
+            setState(NOTIFICATION_STATE);
+            AppNotification.get(context).createNotificationForFloatingIcon();
+
+        } else if (Settings.canDrawOverlays(context)) {
             windowManager.addView(this, params);
 
             setState(NOTIFICATION_STATE);
@@ -56,16 +70,8 @@ public class FloatingIcon extends ImageView {
         }
     }
 
-    public FloatingIcon(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public FloatingIcon(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public static FloatingIcon get(Context context){
-        if(sFloatingIcon == null)
+    public static FloatingIcon get(Context context) {
+        if (sFloatingIcon == null)
             sFloatingIcon = new FloatingIcon(context.getApplicationContext());
         return sFloatingIcon;
     }
@@ -85,13 +91,7 @@ public class FloatingIcon extends ImageView {
     public void setState(int state) {
         this.state = state;
 
-        if(state == SHOW_STATE) {
-            setVisibility(VISIBLE);
-            setEnabled(true);
-        }
-        if(state == NOTIFICATION_STATE) {
-            setVisibility(GONE);
-            setEnabled(false);
-        }
+        setVisibility(state == SHOW_STATE ? VISIBLE : GONE);
+        setEnabled(state == SHOW_STATE);
     }
 }
