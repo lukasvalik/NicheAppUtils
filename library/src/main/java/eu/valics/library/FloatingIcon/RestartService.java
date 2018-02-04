@@ -13,9 +13,7 @@ public class RestartService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent i = new Intent(context, FloatingIconService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(i);
-        } else {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             context.startService(i);
         }
     }
